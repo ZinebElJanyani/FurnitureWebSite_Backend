@@ -56,6 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/UserAccount/refreshToken/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/api/UserAccount/register/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/UserAccount/usersRegistred/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/products/show/**").permitAll()
                 .anyRequest().authenticated();
        // http.authorizeHttpRequests().antMatchers("/api/UserAccount/login/**").permitAll().anyRequest().authenticated();
 
