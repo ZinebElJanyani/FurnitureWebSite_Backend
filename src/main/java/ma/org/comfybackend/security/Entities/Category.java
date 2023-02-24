@@ -15,16 +15,17 @@ public class Category implements Serializable {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String title;
-    private String collection;
-    private String imageC;
+
+    @JsonBackReference
+    @ManyToOne()
+    private CollectionT collection;
     @OneToMany(mappedBy = "category")
     @JsonBackReference
     private Collection<Product> products;
 
-    public Category(String title, String collection, String imageC) {
+    public Category(String title) {
         this.title = title;
-        this.collection = collection;
-        this.imageC = imageC;
+
 
     }
 }
