@@ -30,11 +30,11 @@ public class Product implements Serializable {
     private Material material;
     private boolean selected;
     @ManyToOne()
-    @JsonManagedReference
+
     private Category category;
 
     @OneToMany(mappedBy = "product")
-    @JsonManagedReference
+
     private Collection<Photos> images;
 
     public Product(String nom, String description, double price, int qteStock, int promotion, Date created_at, String style, Color color, Material material, boolean selected, Category category, Collection<Photos> images) {
