@@ -18,11 +18,13 @@ public interface ProductsService {
 
     List<CollectionT> listCollection();
 
-    List<Product> listSelectedProducts();
+    List<Product> listSelectedProducts(double min, double max);
 
     List<byte[]> listProductsPhotos(int id) throws IOException;
 
     byte[] listProductsFirstPhoto(int id) throws IOException;
 
-    List<ProductDTO> listProductsByCatg(int id);
+    List<ProductDTO> listProductsByCatg(int id,double min, double max);
+
+    ProductDTO showOneProduct(int id);
 }

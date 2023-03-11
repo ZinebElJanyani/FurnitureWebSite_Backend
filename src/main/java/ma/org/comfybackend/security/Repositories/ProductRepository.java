@@ -9,7 +9,7 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     @Override
     List<Product> findAll();
 
-    List<Product>findBySelectedIsTrue();
+    List<Product>findBySelectedIsTrueAndPriceBetween(double min,double max);
 
-    List<Product>findByCategoryId(int id);
+    List<Product>findByCategoryIdAndPriceBetween(int id,double min,double max);
 }

@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+
 @Service
 @Transactional
 public class ProductsServiceImpl implements ProductsService{
@@ -55,8 +57,8 @@ public class ProductsServiceImpl implements ProductsService{
     }
 
     @Override
-    public List<Product> listSelectedProducts() {
-        return productRepository.findBySelectedIsTrue();
+    public List<Product> listSelectedProducts(double min , double max) {
+        return productRepository.findBySelectedIsTrueAndPriceBetween(min,max);
     }
 
     @Override
@@ -65,6 +67,7 @@ public class ProductsServiceImpl implements ProductsService{
         Product p =productRepository.findById(id).get();
         List<byte[]> photos = new ArrayList<>();
         Photos[] imagesN= p.getImages().toArray(new Photos[p.getImages().size()]);
+       System.out.println(imagesN.length);
         for(int i=0;i<imagesN.length;i++){
 
             photos.add(Files.readAllBytes(Paths.get(System.getProperty("user.home")+"/homeDecor/products/"+imagesN[i].getImagePath())));
@@ -83,10 +86,16 @@ public class ProductsServiceImpl implements ProductsService{
     }
 
     @Override
-    public List<ProductDTO> listProductsByCatg(int id) {
-        List<Product> products = productRepository.findByCategoryId(id);
+    public List<ProductDTO> listProductsByCatg(int id,double min , double max) {
+        List<Product> products = productRepository.findByCategoryIdAndPriceBetween(id,min,max);
         List<ProductDTO> collect = products.stream().map(p -> this.productMapper.fromProduct(p)).collect(Collectors.toList());
         return collect;
+    }
+
+    @Override
+    public ProductDTO showOneProduct(int id) {
+       ProductDTO pDTO = productMapper.fromProduct(productRepository.findById(id).orElse(null)) ;
+        return pDTO;
     }
 
 }

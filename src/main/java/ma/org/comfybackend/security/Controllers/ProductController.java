@@ -29,6 +29,11 @@ public class ProductController {
         return productService.listProducts();
     }
 
+    @GetMapping(path = "/product/{id}")
+    public ProductDTO showOneProduct(@PathVariable int id){
+        return productService.showOneProduct(id);
+    }
+
     @PostMapping(path = "/new")
     public Product AddProduct(@RequestBody Product product){
         return productService.addNewProduct(product);
@@ -45,13 +50,13 @@ public class ProductController {
     }
 
 
-    @GetMapping(path = "/selected_P")
-    public List<Product> showSelectedProducts(){
-        return productService.listSelectedProducts();
+    @GetMapping(path = "/selected_P/{min}/{max}")
+    public List<Product> showSelectedProducts(@PathVariable double min, @PathVariable double max){
+        return productService.listSelectedProducts(min,max);
     }
-    @GetMapping(path = "/products_catg/{id}")
-    public List<ProductDTO> showProductsByCatg(@PathVariable int id){
-        return productService.listProductsByCatg(id);
+    @GetMapping(path = "/products_catg/{id}/{min}/{max}")
+    public List<ProductDTO> showProductsByCatg(@PathVariable int id,@PathVariable double min, @PathVariable double max){
+        return productService.listProductsByCatg(id,min,max);
     }
 
     @GetMapping(path = "/productP/{id}")
