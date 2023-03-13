@@ -3,6 +3,7 @@ package ma.org.comfybackend;
 import ma.org.comfybackend.security.Entities.*;
 import ma.org.comfybackend.security.Enumerations.Color;
 import ma.org.comfybackend.security.Enumerations.Material;
+import ma.org.comfybackend.security.Mappers.CustomerRegisterMapper;
 import ma.org.comfybackend.security.Repositories.CategoryRepository;
 import ma.org.comfybackend.security.Repositories.CollectionTRepository;
 import ma.org.comfybackend.security.Repositories.PhotosRepository;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import sun.tools.jconsole.JConsole;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,6 +26,12 @@ import java.util.Date;
 @SpringBootApplication
 @EnableGlobalMethodSecurity(prePostEnabled = true,securedEnabled = true)
 public class ComfyBackendApplication {
+    private final ProductRepository productRepository;
+    private final CustomerRegisterMapper userMaper;
+    public ComfyBackendApplication(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+        this.userMaper = new CustomerRegisterMapper();
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(ComfyBackendApplication.class, args);
@@ -33,29 +41,53 @@ public class ComfyBackendApplication {
     PasswordEncoder passwordEncodor(){
         return new BCryptPasswordEncoder();
     }
-    /* @Bean
+   /* @Bean
      CommandLineRunner start(AccountService accountService) {
          return args -> {
              AppUser u = new AppUser();
              u.setName("dina");
-             u.setPassword("dina");
+             u.setPassword("123");
              u.setRole("user");
-             u.setEmail("dina.gmail");
-             accountService.addNewUser(u);
+             u.setEmail("dina_fthi@gmail.com");
+
+             accountService.addNewUserr(u);
+
+             Customer c = new Customer();
+             c.setName("najwa");
+             c.setPassword("123");
+             c.setRole("customer");
+             c.setEmail("najwa.sadik@gmail.com");
+             c.setBirthday("23/5/2000");
+             accountService.addNewCustomer(userMaper.fromCustomer_CDTO(c));
+
+         };
+     }*/
+
+    /*@Bean
+     CommandLineRunner start(AccountService accountService) {
+         return args -> {
+             AppUser u = new AppUser();
+             u.setName("dina");
+             u.setPassword("123");
+             u.setRole("user");
+             u.setEmail("dina_fthi@gmail.com");
+
+             accountService.addNewUserr(u);
+
+             Customer c = new Customer();
+             c.setName("sara");
+             c.setPassword("123");
+             c.setRole("customer");
+             c.setEmail("sara.fadili@gmail.com");
+             c.setBirthday("23/5/2000");
+             accountService.addNewCustomer(userMaper.fromCustomer_CDTO(c));
+
          };
      }
-           Customer c = new Customer();
-            c.setName("customer");
-            c.setPassword("dkndk");
-            c.setRole("customer");
-            c.setEmail("ldfjld@dljd.gmail");
-            c.setBirthday("23/5/2000");
-            accountService.addNewUser(u);
-            accountService.addNewUser(c);
+*/
 
-        };
-    }*/
-  /*  @Bean
+
+    /*@Bean
     CommandLineRunner start(ProductsService productsService, CategoryRepository categoryRepository, PhotosRepository photosRepository, CollectionTRepository collectionTRepository) {
         return args -> {
             //contain some errors because the collection of photos should be affected to just one product and also the image is its that should add the product as a foreign key and not the product add the collection of images

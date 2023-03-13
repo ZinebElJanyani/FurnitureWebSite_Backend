@@ -1,17 +1,15 @@
 package ma.org.comfybackend.security.Enumerations;
 
 public enum Color {
-    Salmon,
-    brown,
-    Tomato,
+    Ivory,
+    Orange,
+    White,
     Blue,
-    Electric,
-    Purple,
-    Lilac,
+    Pink,
     Beige,
     Gray,
     Black,
     Gold,
-    Bronze,
+    Green,
     Red
 }

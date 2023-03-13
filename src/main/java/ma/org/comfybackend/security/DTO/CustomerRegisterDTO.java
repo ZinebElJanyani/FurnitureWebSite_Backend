@@ -34,6 +34,9 @@ public class CustomerRegisterDTO {
         this.birthday = birthday;
     }
 
+    public CustomerRegisterDTO() {
+    }
+
     public String getName() {
         return name;
     }

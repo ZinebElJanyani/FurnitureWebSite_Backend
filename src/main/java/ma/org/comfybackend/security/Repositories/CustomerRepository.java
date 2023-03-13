@@ -5,7 +5,7 @@ import ma.org.comfybackend.security.Entities.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CustomerRepository extends JpaRepository<Customer,Long> {
-    Customer findByName(String name);
-
+    Customer findByEmail(String name);
+    Customer findById(int id);
 
 }

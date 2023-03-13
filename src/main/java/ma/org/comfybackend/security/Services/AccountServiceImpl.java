@@ -29,7 +29,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AppUser addNewUser(CustomerRegisterDTO customerRegisterDTO) {
+    public AppUser addNewCustomer(CustomerRegisterDTO customerRegisterDTO) {
         String pass=customerRegisterDTO.getPassword();
         customerRegisterDTO.setPassword(passwordEncoder.encode(pass));
         if(customerRegisterDTO.getRole().equals("customer")){
@@ -44,6 +44,10 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    @Override
+    public AppUser addNewUserr(AppUser user) {
+            return userRepositiry.save(user);
+    }
 
     @Override
     public AppUser loadUserByUserName(String username) {

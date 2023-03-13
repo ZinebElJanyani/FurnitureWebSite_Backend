@@ -98,4 +98,10 @@ public class ProductsServiceImpl implements ProductsService{
         return pDTO;
     }
 
+    @Override
+    public List<ProductDTO> searchProduct(String name) {
+        List<ProductDTO> collect = productRepository.findByNomContains(name).stream().map(p -> productMapper.fromProduct(p)).collect(Collectors.toList());
+        return collect;
+    }
+
 }

@@ -7,8 +7,8 @@ import ma.org.comfybackend.security.Entities.Customer;
 import java.util.List;
 
 public interface AccountService {
-    AppUser addNewUser(CustomerRegisterDTO customerRegisterDTO);
-    //Customer addNewCustomer(Customer customer);
+    AppUser addNewCustomer(CustomerRegisterDTO customerRegisterDTO);
+    AppUser addNewUserr(AppUser user);
 
     AppUser loadUserByUserName(String username);
 

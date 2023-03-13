@@ -34,6 +34,11 @@ public class ProductController {
         return productService.showOneProduct(id);
     }
 
+    @GetMapping(path = "/Find-product/{name}")
+    public List<ProductDTO> searchProduct(@PathVariable String name){
+        return productService.searchProduct(name);
+    }
+
     @PostMapping(path = "/new")
     public Product AddProduct(@RequestBody Product product){
         return productService.addNewProduct(product);

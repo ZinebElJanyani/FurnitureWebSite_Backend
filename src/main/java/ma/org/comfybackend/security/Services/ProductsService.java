@@ -27,4 +27,6 @@ public interface ProductsService {
     List<ProductDTO> listProductsByCatg(int id,double min, double max);
 
     ProductDTO showOneProduct(int id);
+
+    List<ProductDTO> searchProduct(String name);
 }

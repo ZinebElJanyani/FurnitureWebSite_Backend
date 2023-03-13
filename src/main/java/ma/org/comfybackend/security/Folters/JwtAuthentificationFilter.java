@@ -54,7 +54,7 @@ public class JwtAuthentificationFilter extends UsernamePasswordAuthenticationFil
 
         String jwtRefreshToken = JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis()+15*60*1000))
+                .withExpiresAt(new Date(System.currentTimeMillis()+15*60*10000))
                 .withIssuer(request.getRequestURL().toString())
                 .sign(algorithm);
         Map<String,String> idToken = new HashMap<>();

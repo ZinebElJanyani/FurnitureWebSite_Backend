@@ -37,6 +37,9 @@ public class Product implements Serializable {
 
     private Collection<Photos> images;
 
+    @OneToMany(mappedBy = "product")
+    private Collection<Item> items;
+
     public Product(String nom, String description, double price, int qteStock, int promotion, Date created_at, String style, Color color, Material material, boolean selected, Category category, Collection<Photos> images) {
         this.nom = nom;
         this.description = description;

@@ -42,9 +42,10 @@ public class AccountController {
     }
 
 
+
     @PostMapping(path = "/register")
     public AppUser registerUser(@RequestBody CustomerRegisterDTO customerRegisterDTO){
-        return accountService.addNewUser(customerRegisterDTO);
+        return accountService.addNewCustomer(customerRegisterDTO);
     }
 
     @GetMapping(path="/refreshToken")
