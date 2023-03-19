@@ -18,7 +18,7 @@ public interface ProductsService {
 
     List<CollectionT> listCollection();
 
-    List<Product> listSelectedProducts(double min, double max);
+    List<ProductDTO> listSelectedProducts(double min, double max);
 
     List<byte[]> listProductsPhotos(int id) throws IOException;
 

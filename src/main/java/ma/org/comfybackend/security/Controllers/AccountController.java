@@ -94,6 +94,12 @@ public class AccountController {
     public AppUser showProfile(Principal principal){
     return accountService.loadUserByUserName(principal.getName());
     }
+
+   /* @GetMapping(path = "/userInfo")
+    public int getId(@RequestParam("email") int customer_email){
+        return accountService.loadUserByUserName(principal.getName());
+    }*/
+
 }
 
 

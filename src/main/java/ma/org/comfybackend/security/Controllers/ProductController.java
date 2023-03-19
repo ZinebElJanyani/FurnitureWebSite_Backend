@@ -56,7 +56,7 @@ public class ProductController {
 
 
     @GetMapping(path = "/selected_P/{min}/{max}")
-    public List<Product> showSelectedProducts(@PathVariable double min, @PathVariable double max){
+    public List<ProductDTO> showSelectedProducts(@PathVariable double min, @PathVariable double max){
         return productService.listSelectedProducts(min,max);
     }
     @GetMapping(path = "/products_catg/{id}/{min}/{max}")

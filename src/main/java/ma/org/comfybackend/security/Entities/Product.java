@@ -1,5 +1,6 @@
 package ma.org.comfybackend.security.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,14 +30,16 @@ public class Product implements Serializable {
     private Color color;
     private Material material;
     private boolean selected;
-    @ManyToOne()
 
+    @JsonBackReference
+    @ManyToOne()
     private Category category;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "product")
-
     private Collection<Photos> images;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "product")
     private Collection<Item> items;
 

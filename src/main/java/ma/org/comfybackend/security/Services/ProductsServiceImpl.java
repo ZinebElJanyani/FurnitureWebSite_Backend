@@ -57,8 +57,11 @@ public class ProductsServiceImpl implements ProductsService{
     }
 
     @Override
-    public List<Product> listSelectedProducts(double min , double max) {
-        return productRepository.findBySelectedIsTrueAndPriceBetween(min,max);
+    public List<ProductDTO> listSelectedProducts(double min , double max) {
+
+        List<Product> products = productRepository.findBySelectedIsTrueAndPriceBetween(min,max);
+        List<ProductDTO> collect = products.stream().map(p -> this.productMapper.fromProduct(p)).collect(Collectors.toList());
+        return collect;
     }
 
     @Override
