@@ -30,8 +30,12 @@ public class CaddyController {
     }
 
     @GetMapping(path = "/showCart")
-    public List<Item> showCart(@RequestParam("costomerId") int customer_id){
+    public List<Item> showItems(@RequestParam("costomerId") int customer_id){
         return caddyService.showItems(customer_id);
+    }
+    @GetMapping(path = "/showCartInfo")
+    public Caddy showCart(@RequestParam("costomerId") int customer_id){
+        return caddyService.showCady(customer_id);
     }
     @DeleteMapping (path = "/deleteItem/{id}")
     public int deleteItem(@PathVariable int id){

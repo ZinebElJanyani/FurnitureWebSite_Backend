@@ -16,4 +16,6 @@ public interface CaddyService {
     int deleteItem(int productId);
 
     int updateCaddy(CaddyDTO caddyDTO, int idCustomer);
+
+    Caddy showCady(int customerId);
 }

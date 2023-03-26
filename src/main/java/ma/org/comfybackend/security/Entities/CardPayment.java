@@ -18,7 +18,7 @@ public class CardPayment implements Serializable {
     int id;
     String name;
 
-    int cardNumber;
+    String cardNumber;
 
     int CVC;
 

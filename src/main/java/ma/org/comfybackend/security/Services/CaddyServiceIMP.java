@@ -115,4 +115,11 @@ public class CaddyServiceIMP implements CaddyService{
         return idCustomer;
     }
 
+    @Override
+    public Caddy showCady(int customerId) {
+        Customer customer = customerRepository.findById( customerId).orElse(null);
+        Caddy caddy = caddyRepository.findByCustomer(customer);
+        return caddy;
+    }
+
 }

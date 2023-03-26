@@ -19,6 +19,10 @@ public class DeliveryAdress implements Serializable {
     int id;
     String addess;
 
+    boolean isSaved;
+
+    @ManyToOne()
+    Customer customer;
     @ManyToOne()
     City city;
 

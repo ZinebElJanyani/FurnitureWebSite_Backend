@@ -20,7 +20,12 @@ public class Customer extends AppUser{
     @OneToOne
     private Caddy caddy;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "customer")
     Collection<Command> commands;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "customer")
+    Collection<DeliveryAdress> deliveryAdress;
 
 }

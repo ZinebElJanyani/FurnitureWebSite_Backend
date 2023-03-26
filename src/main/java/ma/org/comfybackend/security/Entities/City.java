@@ -1,5 +1,6 @@
 package ma.org.comfybackend.security.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +23,7 @@ public class City implements Serializable {
     @ManyToOne()
     Region region;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "city")
     Collection<DeliveryAdress> deliveryAdress;
 

@@ -28,7 +28,7 @@ public class Caddy implements Serializable {
     @JsonManagedReference
     Customer customer;
 
-
+    @JsonBackReference
     @OneToMany(mappedBy = "caddy")
     Collection<Item> items;
 
