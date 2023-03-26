@@ -18,6 +18,7 @@ public class CommandServiceImpl implements CommandService{
     RegionRepository regionRepository;
     CityRepository cityRepository;
     CustomerRepository customerRepository;
+    EmailService emailService;
     private final DeliveryAdressRepository deliveryAdressRepository;
     CmmandMapper commandMapper;
     private final CommandRepository commandRepository;
@@ -26,7 +27,7 @@ public class CommandServiceImpl implements CommandService{
     public CommandServiceImpl(RegionRepository regionRepository,CityRepository cityRepository,CustomerRepository customerRepository,
                               DeliveryAdressRepository deliveryAdressRepository,
                               CommandRepository commandRepository,
-                              CardPaymentRepository cardPaymentRepository) {
+                              CardPaymentRepository cardPaymentRepository,EmailService emailService) {
         this.regionRepository = regionRepository;
         this.cityRepository = cityRepository;
         this.customerRepository=customerRepository;
@@ -34,6 +35,7 @@ public class CommandServiceImpl implements CommandService{
         this.commandMapper = new CmmandMapper();
         this.commandRepository = commandRepository;
         this.cardPaymentRepository = cardPaymentRepository;
+        this.emailService = emailService;
     }
 
     @Override
@@ -78,6 +80,14 @@ public class CommandServiceImpl implements CommandService{
         customerRepository.save(customer);
         command.setCustomer(customer);
         Command c = commandRepository.save(command);
+
+        //sending email:
+        this.emailService.sendMessage(//
+                customer.getEmail(),//
+                "Hello there",//
+                "I hope this work"//
+        );
+
         return c.getId();
     }
 

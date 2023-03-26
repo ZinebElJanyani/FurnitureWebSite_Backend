@@ -7,6 +7,7 @@ import ma.org.comfybackend.security.Entities.City;
 import ma.org.comfybackend.security.Entities.Product;
 import ma.org.comfybackend.security.Entities.Region;
 import ma.org.comfybackend.security.Services.CommandService;
+import ma.org.comfybackend.security.Services.EmailService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,9 +17,11 @@ import java.util.Map;
 @RequestMapping("api/command")
 public class CommandController {
     CommandService commandService;
+    EmailService emailService;
 
-    public CommandController(CommandService commandService) {
+    public CommandController(CommandService commandService,EmailService emailService) {
         this.commandService = commandService;
+        this.emailService =emailService;
     }
 
     @GetMapping(path = "/showRegions")
@@ -47,4 +50,17 @@ public class CommandController {
     public int createCreditCard(@RequestBody CardDTO cardDTO, @PathVariable int idCommand){
         return commandService.addCreditPayment(idCommand,cardDTO);
     }
+    @GetMapping(path = "/sendMessage")
+    public String senEmail(){
+
+        this.emailService.sendMessage(//
+                "zinebeljanyani@gmail.com",//
+                "Hello there",//
+                "I hope this work"//
+        );
+        return "message sent";
+    }
+
+
+
 }
