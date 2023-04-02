@@ -1,11 +1,9 @@
 package ma.org.comfybackend.security.Services;
 
-import ma.org.comfybackend.security.DTO.CardDTO;
-import ma.org.comfybackend.security.DTO.CommandDTO;
+import ma.org.comfybackend.security.DTO.*;
 import ma.org.comfybackend.security.Entities.City;
 import ma.org.comfybackend.security.Entities.Region;
 
-import javax.smartcardio.Card;
 import java.util.List;
 import java.util.Map;
 
@@ -19,4 +17,9 @@ public interface CommandService {
     int addCommand(int idAddress, CommandDTO commandDTO);
 
     int addCreditPayment(int idCommand, CardDTO commandDTO);
+    List<CommandShowDTO> displayCommand(int id);
+
+    List<ItemCommandDTO> displayCommandItems(int idCommande);
+
+
 }

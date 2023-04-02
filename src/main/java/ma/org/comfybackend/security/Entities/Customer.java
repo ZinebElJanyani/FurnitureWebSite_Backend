@@ -28,4 +28,8 @@ public class Customer extends AppUser{
     @OneToMany(mappedBy = "customer")
     Collection<DeliveryAdress> deliveryAdress;
 
+    @JsonBackReference
+    @OneToMany(mappedBy = "customer")
+    Collection<Review> reviews;
+
 }

@@ -21,6 +21,9 @@ public class Command implements Serializable {
     int id;
     String ref;
     Date date;
+    String phone;
+    String email;
+    String name;
 
     PaymentMethod paymentMethod;
 
@@ -46,5 +49,6 @@ public class Command implements Serializable {
 
     @OneToMany(mappedBy = "command")
     Collection<CommandItem> commandItems;
+
 
 }

@@ -1,33 +1,37 @@
 package ma.org.comfybackend.security.Entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Date;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Item implements Serializable {
+public class Review implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private int quantity;
-    private float price;
+    int id;
+    int nbre_etoile;
+    String titre;
+    String text;
+    Date creeA;
+    String image;
 
-    @JsonBackReference
+    boolean isRecommanded;
+    String name;
+
+
     @ManyToOne()
     Product product;
 
-    @JsonBackReference
     @ManyToOne()
-    Caddy caddy;
+    Customer customer;
 
-    public int getQuantity() {
-        return quantity;
-    }
+
+
 }

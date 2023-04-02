@@ -1,9 +1,11 @@
 package ma.org.comfybackend.security.Services;
 
 import ma.org.comfybackend.security.DTO.ProductDTO;
+import ma.org.comfybackend.security.DTO.ReviewDTO;
 import ma.org.comfybackend.security.Entities.Category;
 import ma.org.comfybackend.security.Entities.CollectionT;
 import ma.org.comfybackend.security.Entities.Product;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,4 +31,14 @@ public interface ProductsService {
     ProductDTO showOneProduct(int id);
 
     List<ProductDTO> searchProduct(String name);
+
+    int createReview(ReviewDTO reviewDTO, int customerId, int productId);
+
+    void uploadImageReview(MultipartFile file, int idReview) throws IOException;
+
+    List<ReviewDTO> listReviews(int idProduct);
+
+    byte[] getRiviewPhoto(int id) throws IOException;
+
+    int deleteReview(int idReview);
 }

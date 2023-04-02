@@ -16,7 +16,7 @@ public class CommandItem implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private int quantity;
-    private float price;
+    private double price;
 
     @ManyToOne()
     Product product;

@@ -1,10 +1,8 @@
 package ma.org.comfybackend.security.Controllers;
 
-import ma.org.comfybackend.security.DTO.CardDTO;
-import ma.org.comfybackend.security.DTO.CommandDTO;
-import ma.org.comfybackend.security.DTO.CustomerRegisterDTO;
+import ma.org.comfybackend.security.DTO.*;
 import ma.org.comfybackend.security.Entities.City;
-import ma.org.comfybackend.security.Entities.Product;
+import ma.org.comfybackend.security.Entities.Command;
 import ma.org.comfybackend.security.Entities.Region;
 import ma.org.comfybackend.security.Services.CommandService;
 import ma.org.comfybackend.security.Services.EmailService;
@@ -29,7 +27,7 @@ public class CommandController {
         return commandService.listRegions();
     }
 
-    @GetMapping(path = "/showCity/{idR}")
+    @GetMapping(path = "/showCity")
     public List<City> showCities(@PathVariable int idR){
         return commandService.listCities(idR);
     }
@@ -60,7 +58,15 @@ public class CommandController {
         );
         return "message sent";
     }
+    @GetMapping(path = "/getCommand/{idC}")
+    public List<CommandShowDTO> getCommand(@PathVariable int idC){
+        return commandService.displayCommand(idC);
+    }
 
+    @GetMapping(path = "/getCommandItems/{idCommande}")
+    public List<ItemCommandDTO> getCommandItems(@PathVariable int idCommande){
+        return commandService.displayCommandItems(idCommande);
+    }
 
 
 }

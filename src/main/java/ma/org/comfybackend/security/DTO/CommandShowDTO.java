@@ -5,11 +5,12 @@ import ma.org.comfybackend.security.Entities.DeliveryAdress;
 import ma.org.comfybackend.security.Enumerations.CommandState;
 import ma.org.comfybackend.security.Enumerations.PaymentMethod;
 
-import javax.persistence.OneToMany;
 import java.sql.Date;
 import java.util.Collection;
+import java.util.List;
 
-public class CommandDTO {
+public class CommandShowDTO {
+    int id;
     String ref;
     Date date;
 
@@ -29,13 +30,33 @@ public class CommandDTO {
     float deliveryPrice;
     float couponDiscount;
 
+    DeliveryAdress deliveryAdress;
 
+    List<ItemCommandDTO> commandItems;
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public DeliveryAdress getDeliveryAdress() {
+        return deliveryAdress;
+    }
+
+    public List<ItemCommandDTO> getCommandItems() {
+        return commandItems;
+    }
 
     public void setName(String name) {
         this.name = name;
     }
 
+    public void setDeliveryAdress(DeliveryAdress deliveryAdress) {
+        this.deliveryAdress = deliveryAdress;
+    }
 
+    public void setCommandItems(List<ItemCommandDTO> commandItems) {
+        this.commandItems = commandItems;
+    }
 
     public void setPhone(String phone) {
         this.phone = phone;

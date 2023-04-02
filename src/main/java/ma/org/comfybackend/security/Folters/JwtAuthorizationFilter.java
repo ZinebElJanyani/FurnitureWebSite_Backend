@@ -23,7 +23,7 @@ import java.util.Collection;
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-       if(request.getServletPath().equals("/api/UserAccount/refreshToken")||request.getServletPath().equals("/api/UserAccount/register")||request.getServletPath().equals("/api/UserAccount/usersRegistred")||request.getServletPath().equals("/api/products/show")||request.getServletPath().equals("/api/command/sendMessage")){
+       if(request.getServletPath().equals("/api/UserAccount/refreshToken")||request.getServletPath().equals("/api/UserAccount/register")||request.getServletPath().equals("/api/UserAccount/usersRegistred")||request.getServletPath().equals("/api/products/show")||request.getServletPath().equals("/api/command/sendMessage")||request.getServletPath().equals("/api/caddy/showCart")){
            filterChain.doFilter(request,response);
 
        }else{

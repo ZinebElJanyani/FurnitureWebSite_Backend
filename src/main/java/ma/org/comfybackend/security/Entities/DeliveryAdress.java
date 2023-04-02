@@ -1,5 +1,6 @@
 package ma.org.comfybackend.security.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,11 +22,13 @@ public class DeliveryAdress implements Serializable {
 
     boolean isSaved;
 
+    @JsonBackReference
     @ManyToOne()
     Customer customer;
+
     @ManyToOne()
     City city;
-
+    @JsonBackReference
     @OneToMany(mappedBy = "deliveryAdress")
     Collection<Command> commands;
 }

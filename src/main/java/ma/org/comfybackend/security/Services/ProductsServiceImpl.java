@@ -1,15 +1,13 @@
 package ma.org.comfybackend.security.Services;
 
 import ma.org.comfybackend.security.DTO.ProductDTO;
-import ma.org.comfybackend.security.Entities.Category;
-import ma.org.comfybackend.security.Entities.CollectionT;
-import ma.org.comfybackend.security.Entities.Photos;
-import ma.org.comfybackend.security.Entities.Product;
+import ma.org.comfybackend.security.DTO.ReviewDTO;
+import ma.org.comfybackend.security.Entities.*;
 import ma.org.comfybackend.security.Mappers.ProductMapper;
-import ma.org.comfybackend.security.Repositories.CategoryRepository;
-import ma.org.comfybackend.security.Repositories.CollectionTRepository;
-import ma.org.comfybackend.security.Repositories.ProductRepository;
+import ma.org.comfybackend.security.Mappers.ReviewMapper;
+import ma.org.comfybackend.security.Repositories.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -28,11 +26,22 @@ public class ProductsServiceImpl implements ProductsService{
     private CategoryRepository categoryRepository;
     private CollectionTRepository collectionTRepository;
     private ProductMapper productMapper;
-    public ProductsServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, CollectionTRepository collectionTRepository) {
+    private ReviewMapper reviewMapper;
+    private final CustomerRepository customerRepository;
+    private ReviewRepository reviewRepository;
+    private final RegionRepository regionRepository;
+
+    public ProductsServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, CollectionTRepository collectionTRepository,
+                               CustomerRepository customerRepository,ReviewRepository reviewRepository,
+                               RegionRepository regionRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.collectionTRepository = collectionTRepository;
         this.productMapper = new ProductMapper();
+        this.customerRepository = customerRepository;
+        this.reviewMapper = new ReviewMapper();
+        this.reviewRepository=reviewRepository;
+        this.regionRepository = regionRepository;
     }
 
     @Override
@@ -105,6 +114,59 @@ public class ProductsServiceImpl implements ProductsService{
     public List<ProductDTO> searchProduct(String name) {
         List<ProductDTO> collect = productRepository.findByNomContains(name).stream().map(p -> productMapper.fromProduct(p)).collect(Collectors.toList());
         return collect;
+    }
+
+    @Override
+    public int createReview(ReviewDTO reviewDTO, int customerId, int productId) {
+        Customer customer = customerRepository.findById(customerId).orElse(null);
+        Product product=productRepository.findById(productId).orElse(null);
+
+        Review review = reviewMapper.fromReviewDTO(reviewDTO);
+        review.setRecommanded(reviewDTO.getIsRecommanded());
+        System.out.println(reviewDTO.getIsRecommanded());
+        review.setProduct(product);
+        review.setCustomer(customer);
+
+        Review r = this.reviewRepository.save(review);
+        return r.getId();
+    }
+
+    @Override
+    public void uploadImageReview(MultipartFile file, int idReview) throws IOException {
+        Review review =reviewRepository.findById(idReview).orElse(null);
+        review.setImage(idReview+".jpg");
+        Files.write(Paths.get(System.getProperty("user.home")+"/homeDecor/reviews/"+review.getImage()),file.getBytes());
+        reviewRepository.save(review);
+    }
+
+    @Override
+    public List<ReviewDTO> listReviews(int idProduct) {
+        Product p = productRepository.findById(idProduct).orElse(null);
+        List <Review> reviews = reviewRepository.findByProduct(p);
+        List<ReviewDTO> collect = reviews.stream().map(n -> reviewMapper.fromReview(n)).collect(Collectors.toList());
+
+        for(int i=0;i<collect.size();i++){
+            collect.get(i).setId_customer(reviews.get(i).getCustomer().getId());
+        }
+        return collect;
+    }
+
+    @Override
+    public byte[] getRiviewPhoto(int id) throws IOException {
+
+        Review review = reviewRepository.findById(id).orElse(null);
+        if(!review.getImage().equals("")){
+            byte[] result = Files.readAllBytes(Paths.get(System.getProperty("user.home")+"/homeDecor/reviews/"+review.getImage()));
+            return result;
+        }
+
+        return null;
+    }
+
+    @Override
+    public int deleteReview(int idReview) {
+        reviewRepository.deleteById(idReview);
+        return idReview;
     }
 
 }

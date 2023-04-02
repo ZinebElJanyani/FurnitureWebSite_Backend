@@ -2,6 +2,7 @@ package ma.org.comfybackend.security.Controllers;
 
 import ma.org.comfybackend.security.DTO.CustomerRegisterDTO;
 import ma.org.comfybackend.security.DTO.ProductDTO;
+import ma.org.comfybackend.security.DTO.ReviewDTO;
 import ma.org.comfybackend.security.Entities.AppUser;
 import ma.org.comfybackend.security.Entities.Category;
 import ma.org.comfybackend.security.Entities.CollectionT;
@@ -10,6 +11,7 @@ import ma.org.comfybackend.security.Repositories.CollectionTRepository;
 import ma.org.comfybackend.security.Services.ProductsService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.*;
 import java.io.IOException;
@@ -73,4 +75,30 @@ public class ProductController {
     public byte[] showProductsFirstPhoto(@PathVariable int id) throws IOException {
         return productService.listProductsFirstPhoto(id);
     }
+
+    @PostMapping(path = "/createReview")
+    public int createReview(@RequestBody ReviewDTO reviewDTO, @RequestParam("costomerId") int customer_id, @RequestParam("productId") int product_id){
+        return productService.createReview(reviewDTO,customer_id,product_id);
+    }
+
+    @PostMapping(path = "/uploadImageReview/{idReview}")
+    public void uploadImageReview(MultipartFile file, @PathVariable int idReview) throws IOException {
+        productService.uploadImageReview(file, idReview);
+    }
+
+    @GetMapping(path = "/reviews/{idProduct}")
+    public List<ReviewDTO> showSelectedProducts(@PathVariable int idProduct){
+        return productService.listReviews(idProduct);
+    }
+    @GetMapping(path = "/ReviewImage/{id}",produces = MediaType.IMAGE_JPEG_VALUE)
+    public byte[] showReviewImg(@PathVariable int id) throws IOException {
+        return productService.getRiviewPhoto(id);
+    }
+    @DeleteMapping(path = "/removeReview/{idReview}")
+    public int deleteReview(@PathVariable int idReview) {
+       return productService.deleteReview(idReview);
+
+    }
+
+
 }

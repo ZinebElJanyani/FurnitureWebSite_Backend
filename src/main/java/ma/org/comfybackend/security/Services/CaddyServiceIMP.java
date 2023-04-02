@@ -1,15 +1,20 @@
 package ma.org.comfybackend.security.Services;
 
 import ma.org.comfybackend.security.DTO.CaddyDTO;
+import ma.org.comfybackend.security.DTO.ItemDTO;
 import ma.org.comfybackend.security.Entities.Caddy;
 import ma.org.comfybackend.security.Entities.Customer;
 import ma.org.comfybackend.security.Entities.Item;
 import ma.org.comfybackend.security.Entities.Product;
+import ma.org.comfybackend.security.Mappers.ItemMapper;
+import ma.org.comfybackend.security.Mappers.ProductMapper;
 import ma.org.comfybackend.security.Repositories.*;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -20,6 +25,8 @@ public class CaddyServiceIMP implements CaddyService{
     ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final ItemRepository itemRepository;
+    ItemMapper itemMapper;
+    private ProductMapper productMapper;
 
     public CaddyServiceIMP(CaddyRepository caddyRepository,CustomerRepository customerRepository,
                            CategoryRepository categoryRepository,ProductRepository productRepository,
@@ -29,6 +36,8 @@ public class CaddyServiceIMP implements CaddyService{
         this.categoryRepository = categoryRepository;
         this.productRepository = productRepository;
         this.itemRepository = itemRepository;
+        this.itemMapper = new ItemMapper();
+        this.productMapper = new ProductMapper();
     }
 
     @Override
@@ -85,11 +94,12 @@ public class CaddyServiceIMP implements CaddyService{
     }
 
     @Override
-    public List<Item> showItems(int customerId) {
+    public List<ItemDTO> showItems(int customerId) {
         Customer customer = customerRepository.findById( customerId).orElse(null);
         Caddy caddy = caddyRepository.findByCustomer(customer);
-
-        return (List<Item>)caddy.getItems();
+        List<Item> items = (List<Item>)caddy.getItems();
+        List<ItemDTO> collect = items.stream().map(p -> this.itemMapper.fromItem(p)).collect(Collectors.toList());
+        return collect;
     }
 
     @Override
@@ -120,6 +130,26 @@ public class CaddyServiceIMP implements CaddyService{
         Customer customer = customerRepository.findById( customerId).orElse(null);
         Caddy caddy = caddyRepository.findByCustomer(customer);
         return caddy;
+    }
+
+    @Override
+    public List<ItemDTO> displayItems(int cid) {
+      Customer c = customerRepository.findById(cid).orElse(null);
+      Caddy caddy = caddyRepository.findByCustomer(c);
+
+        List<Item> items = itemRepository.findByCaddy(caddy);
+        List<ItemDTO> itemDTOS=new ArrayList<>();
+
+        for(Item item : items){
+           ItemDTO itemDTO = new ItemDTO();
+           itemDTO.setPrice(item.getPrice());
+           itemDTO.setQuantity(item.getQuantity());
+           itemDTO.setProduct(productMapper.fromProduct(item.getProduct()));
+           itemDTOS.add(itemDTO);
+        }
+
+
+        return itemDTOS;
     }
 
 }
