@@ -100,5 +100,13 @@ public class ProductController {
 
     }
 
+    @GetMapping(path = "/products")
+    public List<ProductDTO> showProducts(@RequestParam List<Integer> ids){
+        return productService.listProducts(ids);
+    }
 
+    @PostMapping(path = "/addFavorite/{id_customer}")
+    public int addFavorite(@RequestParam List<Integer> ids,@PathVariable int id_customer){
+        return productService.addFavorite(ids,id_customer);
+    }
 }

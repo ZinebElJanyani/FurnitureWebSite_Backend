@@ -169,4 +169,31 @@ public class ProductsServiceImpl implements ProductsService{
         return idReview;
     }
 
+    @Override
+    public List<ProductDTO> listProducts(List<Integer> ids) {
+        List<ProductDTO> productDTOS = new ArrayList<>();
+        for(Integer i :ids){
+            Product p = productRepository.findById(i).orElse(null);
+            productDTOS.add(this.productMapper.fromProduct(p));
+        }
+        return productDTOS;
+    }
+
+    @Override
+    public int addFavorite(List<Integer> ids, int idCustomer) {
+
+        Customer customer = customerRepository.findById(idCustomer).orElse(null);
+        customer.getProducts().clear();
+        for(Integer i :ids){
+            Product p = productRepository.findById(i).orElse(null);
+            customer.getProducts().add(p);
+            if(!p.getCustomers().contains(customer)){
+            p.getCustomers().add(customer);
+            }
+        }
+        customerRepository.save(customer);
+
+        return 1;
+    }
+
 }

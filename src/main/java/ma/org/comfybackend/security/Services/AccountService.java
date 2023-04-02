@@ -3,7 +3,9 @@ package ma.org.comfybackend.security.Services;
 import ma.org.comfybackend.security.DTO.CustomerRegisterDTO;
 import ma.org.comfybackend.security.Entities.AppUser;
 import ma.org.comfybackend.security.Entities.Customer;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface AccountService {
@@ -19,4 +21,10 @@ public interface AccountService {
     List<Customer> showCustomerInfo();
 
     List<String> listEmailUsers();
+
+    AppUser editCustomer(CustomerRegisterDTO customerRegisterDTO);
+
+    void uploadImageUser(MultipartFile file, int idCustomer) throws IOException;
+
+    byte[] getUserPhoto(int id) throws IOException;
 }

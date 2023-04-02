@@ -41,4 +41,8 @@ public interface ProductsService {
     byte[] getRiviewPhoto(int id) throws IOException;
 
     int deleteReview(int idReview);
+
+    List<ProductDTO> listProducts(List<Integer> ids);
+
+    int addFavorite(List<Integer> ids, int idCustomer);
 }

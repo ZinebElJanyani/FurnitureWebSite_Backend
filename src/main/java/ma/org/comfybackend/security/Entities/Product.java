@@ -31,6 +31,9 @@ public class Product implements Serializable {
     private Material material;
     private boolean selected;
 
+    @ManyToMany(mappedBy = "products")
+    Collection<Customer> customers;
+
     @JsonBackReference
     @ManyToOne()
     private Category category;

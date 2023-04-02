@@ -3,13 +3,19 @@ package ma.org.comfybackend.security.Services;
 import ma.org.comfybackend.security.DTO.CustomerRegisterDTO;
 import ma.org.comfybackend.security.Entities.AppUser;
 import ma.org.comfybackend.security.Entities.Customer;
+import ma.org.comfybackend.security.Entities.Review;
 import ma.org.comfybackend.security.Mappers.CustomerRegisterMapper;
 import ma.org.comfybackend.security.Repositories.AppUserRepository;
 import ma.org.comfybackend.security.Repositories.CustomerRepository;
+import org.apache.tika.Tika;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,6 +79,60 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public List<String> listEmailUsers() {
         return userRepositiry.findAllEmail();
+    }
+
+    @Override
+    public AppUser editCustomer(CustomerRegisterDTO customerRegisterDTO) {
+
+        Customer customer = customerRepository.findById(customerRegisterDTO.getId()).orElse(null);
+        customer.setName(customerRegisterDTO.getName());
+        customer.setEmail(customerRegisterDTO.getEmail());
+        customer.setPhone(customerRegisterDTO.getPhone());
+        customer.setBirthday(customerRegisterDTO.getBirthday());
+
+        Customer c = this.customerRepository.save(customer);
+
+        return c;
+    }
+
+    @Override
+    public void uploadImageUser(MultipartFile file, int idCustomer) throws IOException {
+        Customer customer = customerRepository.findById(idCustomer).orElse(null);
+        String contentType = new Tika().detect(file.getInputStream());
+        String extension = "";
+
+        // Set the extension based on the detected content type
+        if (contentType.equals("image/jpeg")) {
+            extension = "jpg";
+        } else if (contentType.equals("image/png")) {
+            extension = "png";
+        } else {
+            throw new IOException("Unsupported image format");
+        }
+        // Delete the existing image file
+        String oldFilePath = System.getProperty("user.home") + "/homeDecor/userImages/" + customer.getPhotoPath();
+        Files.deleteIfExists(Paths.get(oldFilePath));
+
+        customer.setPhotoPath(idCustomer + "." + extension);
+        try {
+            Files.write(Paths.get(System.getProperty("user.home") + "/homeDecor/userImages/" + customer.getPhotoPath()), file.getBytes());
+            customerRepository.save(customer);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    @Override
+    public byte[] getUserPhoto(int id) throws IOException {
+        Customer customer = customerRepository.findById(id).orElse(null);
+        if(!customer.getPhotoPath().equals("")){
+            byte[] result = Files.readAllBytes(Paths.get(System.getProperty("user.home")+"/homeDecor/userImages/"+customer.getPhotoPath()));
+            return result;
+        }
+
+        return null;
+
     }
 
 

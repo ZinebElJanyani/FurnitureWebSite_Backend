@@ -11,15 +11,18 @@ import ma.org.comfybackend.security.Entities.Customer;
 import ma.org.comfybackend.security.JWTUtil;
 import ma.org.comfybackend.security.Repositories.CustomerRepository;
 import ma.org.comfybackend.security.Services.AccountService;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.security.Principal;
 import java.sql.Date;
 import java.util.*;
@@ -100,6 +103,20 @@ public class AccountController {
         return accountService.loadUserByUserName(principal.getName());
     }*/
 
+    @PutMapping(path = "/edit")
+    public AppUser editUser(@RequestBody CustomerRegisterDTO customerRegisterDTO){
+        return accountService.editCustomer(customerRegisterDTO);
+    }
+
+    @PostMapping(path = "/uploadImageUser/{idCustomer}")
+    public void uploadImageReview(MultipartFile file, @PathVariable int idCustomer) throws IOException {
+        accountService.uploadImageUser(file, idCustomer);
+    }
+
+    @GetMapping(path = "/userImage/{id}",produces = MediaType.IMAGE_JPEG_VALUE)
+    public byte[] showReviewImg(@PathVariable int id) throws IOException {
+        return accountService.getUserPhoto(id);
+    }
 }
 
 

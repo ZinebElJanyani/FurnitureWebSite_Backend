@@ -68,6 +68,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET,"/api/command/sendMessage/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/products/reviews/{idProduct}/**").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/products/ReviewImage/{id}/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/products/products/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/UserAccount/userImage/{id}/**").permitAll()
 
                 //.antMatchers(HttpMethod.POST,"/api/caddy/addItem/**").permitAll()
                 .anyRequest().authenticated();
