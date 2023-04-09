@@ -3,7 +3,6 @@ package ma.org.comfybackend.security.Services;
 import ma.org.comfybackend.security.DTO.CustomerRegisterDTO;
 import ma.org.comfybackend.security.Entities.AppUser;
 import ma.org.comfybackend.security.Entities.Customer;
-import ma.org.comfybackend.security.Entities.Review;
 import ma.org.comfybackend.security.Mappers.CustomerRegisterMapper;
 import ma.org.comfybackend.security.Repositories.AppUserRepository;
 import ma.org.comfybackend.security.Repositories.CustomerRepository;
@@ -56,8 +55,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AppUser loadUserByUserName(String username) {
-        return userRepositiry.findByName(username);
+    public CustomerRegisterDTO loadUserByUserName(String username) {
+        Customer customer = customerRepository.findByName(username);
+
+        System.out.println(customer.getName());
+        System.out.println(customer.getPhone());
+        return customerRegisterMapper.fromCustomer_CDTO(customer);
     }
     @Override
     public AppUser loadUserByEmail(String email) {

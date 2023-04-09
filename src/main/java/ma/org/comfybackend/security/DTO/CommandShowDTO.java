@@ -38,6 +38,10 @@ public class CommandShowDTO {
         this.id = id;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public DeliveryAdress getDeliveryAdress() {
         return deliveryAdress;
     }

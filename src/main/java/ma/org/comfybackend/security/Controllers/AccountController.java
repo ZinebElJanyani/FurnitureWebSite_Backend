@@ -51,7 +51,7 @@ public class AccountController {
         return accountService.addNewCustomer(customerRegisterDTO);
     }
 
-    @GetMapping(path="/refreshToken")
+    /*@GetMapping(path="/refreshToken")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws Exception{
         String authtoken = request.getHeader(JWTUtil.AUTH8HEADER);
         if(authtoken!=null && authtoken.startsWith("Bearer ")){
@@ -90,11 +90,11 @@ public class AccountController {
         }else {
             throw new RuntimeException("Refresh token is required !");
             }
-    }
+    }*/
 
 
     @GetMapping(path = "/profile")
-    public AppUser showProfile(Principal principal){
+    public CustomerRegisterDTO showProfile(Principal principal){
     return accountService.loadUserByUserName(principal.getName());
     }
 

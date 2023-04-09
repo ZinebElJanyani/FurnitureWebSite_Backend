@@ -12,7 +12,7 @@ public interface AccountService {
     AppUser addNewCustomer(CustomerRegisterDTO customerRegisterDTO);
     AppUser addNewUserr(AppUser user);
 
-    AppUser loadUserByUserName(String username);
+    CustomerRegisterDTO loadUserByUserName(String username);
 
 
     AppUser loadUserByEmail(String email);

@@ -6,8 +6,13 @@ import ma.org.comfybackend.security.Entities.Command;
 import ma.org.comfybackend.security.Entities.Region;
 import ma.org.comfybackend.security.Services.CommandService;
 import ma.org.comfybackend.security.Services.EmailService;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -66,6 +71,16 @@ public class CommandController {
     @GetMapping(path = "/getCommandItems/{idCommande}")
     public List<ItemCommandDTO> getCommandItems(@PathVariable int idCommande){
         return commandService.displayCommandItems(idCommande);
+    }
+
+
+    @GetMapping(path = "/getInvoice/{idCommande}")
+    public ResponseEntity<InputStreamResource> getInvoice(@PathVariable int idCommande){
+       ByteArrayInputStream bais= commandService.exportPDF(idCommande);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition","inline;filename=Command_Invoice"+idCommande+".pdf");
+
+        return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(new InputStreamResource(bais));
     }
 
 

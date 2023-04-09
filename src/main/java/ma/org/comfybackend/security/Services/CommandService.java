@@ -4,6 +4,7 @@ import ma.org.comfybackend.security.DTO.*;
 import ma.org.comfybackend.security.Entities.City;
 import ma.org.comfybackend.security.Entities.Region;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -22,4 +23,5 @@ public interface CommandService {
     List<ItemCommandDTO> displayCommandItems(int idCommande);
 
 
+    ByteArrayInputStream exportPDF(int idCommande);
 }

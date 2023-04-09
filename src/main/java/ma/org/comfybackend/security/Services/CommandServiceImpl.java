@@ -1,4 +1,9 @@
 package ma.org.comfybackend.security.Services;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.ColumnText;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import ma.org.comfybackend.security.DTO.*;
 import ma.org.comfybackend.security.Mappers.ProductMapper;
 import ma.org.comfybackend.security.Repositories.*;
@@ -7,11 +12,17 @@ import ma.org.comfybackend.security.Entities.*;
 import ma.org.comfybackend.security.Mappers.CmmandMapper;
 import org.springframework.stereotype.Service;
 
+
 import javax.transaction.Transactional;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -174,8 +185,8 @@ public class CommandServiceImpl implements CommandService{
             commandShowDTO.setWithAssembly(command.isWithAssembly());
             commandShowDTO.setRef(command.getRef());
             commandShowDTO.setName(command.getName());
-
             commandShowDTO.setId(command.getId());
+
             List<CommandItem> commandItems =  command.getCommandItems().stream().collect(Collectors.toList());
             List<ItemCommandDTO> itemDTOS = new ArrayList<>();
             for(CommandItem item : commandItems){
@@ -209,6 +220,267 @@ public class CommandServiceImpl implements CommandService{
 
         }
         return itemDTOS;
+    }
+
+    @Override
+    public ByteArrayInputStream exportPDF(int idCommande) {
+
+        Command command = commandRepository.findById(idCommande).orElse(null);
+      Document document = new Document();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            PdfWriter writer=  PdfWriter.getInstance(document,out);
+            document.open();
+
+            com.itextpdf.text.Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD,25, BaseColor.WHITE);
+            com.itextpdf.text.Font font2 = FontFactory.getFont(FontFactory.COURIER_OBLIQUE,16, BaseColor.WHITE);
+
+
+            // Create table to hold content
+            PdfPTable table = new PdfPTable(1);
+            table.setWidthPercentage(100);
+
+
+
+            // Create cell to hold content and set background color to salmon
+            PdfPCell cell = new PdfPCell();
+            cell.setBackgroundColor(new BaseColor(255,153,102));
+            cell.setBorder(Rectangle.NO_BORDER);
+
+            cell.setPadding(20);
+            cell.setLeading(0, 1);
+
+
+            Image image = Image.getInstance("C:\\Users\\HP\\homeDecor\\pdf\\logo.jpg"); // Replace with the path to your image file
+            image.scaleAbsolute(150f, 100f);
+            image.setAlignment(Element.ALIGN_RIGHT);
+            cell.addElement(image);
+
+            Paragraph para = new Paragraph("Invoice",font);
+            para.setIndentationLeft(20);
+
+            cell.addElement(para);
+
+
+
+
+           // document.add(Chunk.NEWLINE);
+            Paragraph date = new Paragraph(command.getDate().toString(),font2);
+            para.setIndentationLeft(25);
+            cell.addElement(date);
+
+        // Add cell to table
+            table.addCell(cell);
+
+
+            // Add table to document
+            document.add(table);
+
+            document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE); document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE);
+
+            Paragraph paragraph = new Paragraph();
+            paragraph.setSpacingBefore(20f); // Set the spacing before the paragraph to 20 points
+            document.add(paragraph);
+
+            com.itextpdf.text.Font font3 = FontFactory.getFont(null,14, BaseColor.WHITE);
+
+            PdfPTable pdfPTable = new PdfPTable(2);
+            pdfPTable.setWidthPercentage(100);
+            Stream.of("Customer Information","Company").forEach( headerTitle -> {
+                PdfPCell header = new PdfPCell();
+                header.setLeading(0, 1);
+                header.setBorder(Rectangle.NO_BORDER);
+
+                com.itextpdf.text.Font headFont = FontFactory.getFont(FontFactory.HELVETICA,15);
+
+                header.setHorizontalAlignment(Element.ALIGN_LEFT);
+
+                header.setPhrase(new Phrase(headerTitle,headFont));
+                pdfPTable.addCell(header);
+            });
+
+                document.add(Chunk.NEWLINE);
+                document.add(Chunk.NEWLINE);
+                PdfPCell titleCell = new PdfPCell(new Phrase("Name: "+command.getCustomer().getName()));
+                titleCell.setPaddingLeft(10);
+                titleCell.setBorder(Rectangle.NO_BORDER);
+                //titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                titleCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                pdfPTable.addCell(titleCell);
+
+                PdfPCell desCell = new PdfPCell(new Phrase("Company Name: Home Decor Co."));
+                desCell.setPaddingLeft(10);
+            desCell.setBorder(Rectangle.NO_BORDER);
+
+            //desCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                desCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                pdfPTable.addCell(desCell);
+
+            PdfPCell cell2 = new PdfPCell(new Phrase("Email: "+command.getCustomer().getEmail()));
+            cell2.setPaddingLeft(10);
+            cell2.setBorder(Rectangle.NO_BORDER);
+            //cell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
+            pdfPTable.addCell(cell2);
+
+            PdfPCell cell3 = new PdfPCell(new Phrase("Address: 123 Main Street, Suite 100"));
+            cell3.setPaddingLeft(10);
+            cell3.setBorder(Rectangle.NO_BORDER);
+           // cell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell3.setHorizontalAlignment(Element.ALIGN_LEFT);
+            pdfPTable.addCell(cell3);
+
+            PdfPCell cell4 = new PdfPCell(new Phrase("Delivery Address: "+command.getDeliveryAdress().getAddess()));
+            cell4.setPaddingLeft(10);
+            cell4.setBorder(Rectangle.NO_BORDER);
+           // cell4.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell4.setHorizontalAlignment(Element.ALIGN_LEFT);
+            pdfPTable.addCell(cell4);
+
+            PdfPCell cell5 = new PdfPCell(new Phrase("Zip Code: 90001"));
+            cell5.setPaddingLeft(10);
+            cell5.setBorder(Rectangle.NO_BORDER);
+          //  cell5.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell5.setHorizontalAlignment(Element.ALIGN_LEFT);
+            pdfPTable.addCell(cell5);
+
+            PdfPCell cell6 = new PdfPCell(new Phrase("jbxjdhbjdcdbcd" ,font3));
+            cell6.setPaddingLeft(10);
+            cell6.setBorder(Rectangle.NO_BORDER);
+          //  cell6.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell6.setHorizontalAlignment(Element.ALIGN_LEFT);
+            pdfPTable.addCell(cell6);
+
+            PdfPCell cell7 = new PdfPCell(new Phrase("Phone Number: (555) 555-5555"));
+            cell7.setPaddingLeft(10);
+            cell7.setBorder(Rectangle.NO_BORDER);
+          //  cell7.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell7.setHorizontalAlignment(Element.ALIGN_LEFT);
+            pdfPTable.addCell(cell7);
+
+            PdfPCell cell8 = new PdfPCell(new Phrase("jbxjdhbjdcdbcd" ,font3));
+            cell8.setPaddingLeft(10);
+            cell8.setBorder(Rectangle.NO_BORDER);
+            //  cell6.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell8.setHorizontalAlignment(Element.ALIGN_LEFT);
+            pdfPTable.addCell(cell8);
+
+            PdfPCell cell9 = new PdfPCell(new Phrase("Email: info@homedecorco.com"));
+            cell9.setPaddingLeft(10);
+            cell9.setBorder(Rectangle.NO_BORDER);
+            //  cell7.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell9.setHorizontalAlignment(Element.ALIGN_LEFT);
+            pdfPTable.addCell(cell9);
+
+            document.add(pdfPTable);
+
+            document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE); document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE);
+
+            PdfPTable pdfPTable2 = new PdfPTable(4);
+
+            Stream.of("Product","Price","Quantity","Total Price").forEach( headerTitle -> {
+                    PdfPCell header = new PdfPCell();
+                    com.itextpdf.text.Font headFont = FontFactory.getFont(FontFactory.HELVETICA);
+                    header.setBackgroundColor(new BaseColor(255,153,102));
+                    header.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    header.setBorderWidth(1);
+                    header.setPhrase(new Phrase(headerTitle,headFont));
+                pdfPTable2.addCell(header);
+            });
+
+            for(CommandItem item :command.getCommandItems()){
+                PdfPCell titleCell2 = new PdfPCell(new Phrase(item.getProduct().getNom()));
+                titleCell2.setPaddingLeft(1);
+               // titleCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                titleCell2.setHorizontalAlignment(Element.ALIGN_LEFT);
+                pdfPTable2.addCell(titleCell2);
+
+                PdfPCell desCell2 = new PdfPCell(new Phrase(""+item.getPrice()));
+                desCell2.setPaddingLeft(1);
+              //  desCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                desCell2.setHorizontalAlignment(Element.ALIGN_LEFT);
+                pdfPTable2.addCell(desCell2);
+
+                PdfPCell titleCell3 = new PdfPCell(new Phrase(""+item.getQuantity()));
+                titleCell3.setPaddingLeft(1);
+                // titleCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                titleCell3.setHorizontalAlignment(Element.ALIGN_LEFT);
+                pdfPTable2.addCell(titleCell3);
+
+                PdfPCell desCell4 = new PdfPCell(new Phrase(""+(item.getQuantity()*item.getPrice())));
+                desCell4.setPaddingLeft(1);
+                //  desCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                desCell4.setHorizontalAlignment(Element.ALIGN_LEFT);
+                pdfPTable2.addCell(desCell4);
+            }
+
+
+
+
+            document.add(pdfPTable2);
+            document.add(Chunk.NEWLINE);
+            document.add(Chunk.NEWLINE);
+            com.itextpdf.text.Font fontDetail = FontFactory.getFont(FontFactory.HELVETICA,14, BaseColor.BLACK);
+
+            Paragraph method = new Paragraph("Payment Method : "+command.getPaymentMethod().toString(),fontDetail);
+            method.setAlignment(Element.ALIGN_RIGHT);
+            document.add(method);
+            document.add(Chunk.NEWLINE);
+
+            if(command.getCouponDiscount()!=0) {
+                Paragraph coupon = new Paragraph("Discount : " + command.getCouponDiscount(), fontDetail);
+                coupon.setAlignment(Element.ALIGN_RIGHT);
+                document.add(coupon);
+                document.add(Chunk.NEWLINE);
+            }
+
+            String dl = (command.getDeliveryPrice()==0)? "Free Delivery": ""+command.getDeliveryPrice();
+
+            Paragraph delevery = new Paragraph("Delivery : "+dl,fontDetail);
+            delevery.setAlignment(Element.ALIGN_RIGHT);
+            document.add(delevery);
+            document.add(Chunk.NEWLINE);
+
+            if(command.getAssemblyPrice()!=0) {
+                Paragraph asseb = new Paragraph("Discount : " + command.getAssemblyPrice(), fontDetail);
+                asseb.setAlignment(Element.ALIGN_RIGHT);
+                document.add(asseb);
+                document.add(Chunk.NEWLINE);
+            }
+
+            document.add(Chunk.NEWLINE);
+            com.itextpdf.text.Font fonttotal = FontFactory.getFont(FontFactory.COURIER_OBLIQUE,20, new BaseColor(255,153,102));
+
+            Paragraph total = new Paragraph("Total : "+command.getTotalPrice(),fonttotal);
+            total.setAlignment(Element.ALIGN_RIGHT);
+            document.add(total);
+
+
+
+
+            Image sig = Image.getInstance("C:\\Users\\HP\\homeDecor\\pdf\\signature.png"); // Replace with the path to your image file
+            sig.scaleAbsolute(200f, 50f);
+            sig.setAlignment(Element.ALIGN_LEFT);
+            document.add(sig);
+
+
+            document.close();
+
+
+        } catch (DocumentException e) {
+            System.out.println(e.getMessage());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        return new ByteArrayInputStream(out.toByteArray());
     }
 
 }
