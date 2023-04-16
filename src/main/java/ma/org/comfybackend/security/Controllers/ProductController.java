@@ -1,5 +1,6 @@
 package ma.org.comfybackend.security.Controllers;
 
+import ma.org.comfybackend.security.DTO.CategoryDTO;
 import ma.org.comfybackend.security.DTO.CustomerRegisterDTO;
 import ma.org.comfybackend.security.DTO.ProductDTO;
 import ma.org.comfybackend.security.DTO.ReviewDTO;
@@ -47,7 +48,7 @@ public class ProductController {
     }
 
     @GetMapping(path = "/categories")
-    public List<Category> showCategory(){
+    public List<CategoryDTO> showCategory(){
         return productService.listCategory();
     }
 
@@ -56,7 +57,15 @@ public class ProductController {
         return productService.listCollection();
     }
 
+    @PostMapping(path = "/newCategory")
+    public int AddCategory(@RequestBody CategoryDTO category){
+        return productService.addNewCategory(category);
+    }
 
+    @DeleteMapping(path = "/dropCategory/{id}")
+    public int dropCategory(@PathVariable int id){
+        return productService.dropCategory(id);
+    }
     @GetMapping(path = "/selected_P/{min}/{max}")
     public List<ProductDTO> showSelectedProducts(@PathVariable double min, @PathVariable double max){
         return productService.listSelectedProducts(min,max);

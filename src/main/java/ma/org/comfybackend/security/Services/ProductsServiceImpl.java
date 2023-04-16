@@ -1,5 +1,6 @@
 package ma.org.comfybackend.security.Services;
 
+import ma.org.comfybackend.security.DTO.CategoryDTO;
 import ma.org.comfybackend.security.DTO.ProductDTO;
 import ma.org.comfybackend.security.DTO.ReviewDTO;
 import ma.org.comfybackend.security.Entities.*;
@@ -56,8 +57,20 @@ public class ProductsServiceImpl implements ProductsService{
     }
 
     @Override
-    public List<Category> listCategory() {
-        return categoryRepository.findAll();
+    public List<CategoryDTO> listCategory() {
+        List<Category> categories = categoryRepository.findAll();
+        List<CategoryDTO> categoryDTOS = new ArrayList<>();
+        for(Category c : categories){
+            CategoryDTO cat = new CategoryDTO();
+            cat.setTitle(c.getTitle());
+            cat.setId(c.getId());
+            CollectionT collectionT = this.categoryRepository.getCollectionByCategoryId(c.getId());
+            if(collectionT!=null){
+            cat.setCollection(collectionT.getTitle());
+
+            categoryDTOS.add(cat);}
+        }
+        return categoryDTOS;
     }
 
     @Override
@@ -194,6 +207,33 @@ public class ProductsServiceImpl implements ProductsService{
         customerRepository.save(customer);
 
         return 1;
+    }
+
+    @Override
+    public int addNewCategory(CategoryDTO category) {
+        Category cat ;
+        if(category.getId()==0){
+            cat =  new Category();
+        }else{
+            cat = categoryRepository.findById(category.getId());
+        }
+        cat.setTitle(category.getTitle());
+        CollectionT c = collectionTRepository.findByTitle(category.getCollection());
+
+        cat.setCollection(c);
+
+        Category result= this.categoryRepository.save(cat);
+        return result.getId();
+    }
+
+    @Override
+    public int dropCategory(int id) {
+        Category category = categoryRepository.findById(id);
+        if(category !=null && category.getProducts().size()==0){
+            categoryRepository.delete(category);
+            return 1;
+        }
+        return 0;
     }
 
 }

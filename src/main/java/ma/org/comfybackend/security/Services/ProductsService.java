@@ -1,8 +1,8 @@
 package ma.org.comfybackend.security.Services;
 
+import ma.org.comfybackend.security.DTO.CategoryDTO;
 import ma.org.comfybackend.security.DTO.ProductDTO;
 import ma.org.comfybackend.security.DTO.ReviewDTO;
-import ma.org.comfybackend.security.Entities.Category;
 import ma.org.comfybackend.security.Entities.CollectionT;
 import ma.org.comfybackend.security.Entities.Product;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +16,7 @@ public interface ProductsService {
 
     Product addNewProduct(Product product);
 
-    List<Category>listCategory();
+    List<CategoryDTO> listCategory();
 
     List<CollectionT> listCollection();
 
@@ -45,4 +45,8 @@ public interface ProductsService {
     List<ProductDTO> listProducts(List<Integer> ids);
 
     int addFavorite(List<Integer> ids, int idCustomer);
+
+    int addNewCategory(CategoryDTO category);
+
+    int dropCategory(int id);
 }
