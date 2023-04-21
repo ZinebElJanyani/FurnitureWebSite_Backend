@@ -10,7 +10,7 @@ public enum CommandState implements Serializable {
 
     cancelled,
 
-    delivered,
+    recieved,
 
-    non_conforming
+
 }

@@ -68,10 +68,16 @@ public class CommandController {
         return commandService.displayCommand(idC);
     }
 
+    @GetMapping(path = "/showCommands")
+    public List<CommandDTO> getAllCommands() {
+        return commandService.displayAllCommands();
+    }
+
     @GetMapping(path = "/getCommandItems/{idCommande}")
     public List<ItemCommandDTO> getCommandItems(@PathVariable int idCommande){
         return commandService.displayCommandItems(idCommande);
     }
+
 
 
     @GetMapping(path = "/getInvoice/{idCommande}")
@@ -83,5 +89,8 @@ public class CommandController {
         return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(new InputStreamResource(bais));
     }
 
-
+    @PostMapping(path = "/changeState/{idCommand}")
+    public int createCreditCard(@PathVariable int idCommand,@RequestParam("state") String stateValue){
+        return commandService.changeState(idCommand,stateValue);
+    }
 }

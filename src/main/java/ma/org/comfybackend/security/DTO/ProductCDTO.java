@@ -5,7 +5,7 @@ import ma.org.comfybackend.security.Enumerations.Material;
 
 import java.util.Date;
 
-public class ProductDTO {
+public class ProductCDTO {
     private int id;
     private String nom;
     private String description;
@@ -18,23 +18,15 @@ public class ProductDTO {
     private Material material;
     private boolean selected;
 
+    private int categoryId;
+    private String categorytitle;
 
-    public ProductDTO() {
-
+    public void setCategorytitle(String categorytitle) {
+        this.categorytitle = categorytitle;
     }
 
-    public ProductDTO(int id, String nom, String description, double price, int qteStock, int promotion, Date createdAt, boolean style, Color color, Material material, boolean selected) {
-        this.id = id;
-        this.nom = nom;
-        this.description = description;
-        this.price = price;
-        this.qteStock = qteStock;
-        this.promotion = promotion;
-        created_at = createdAt;
-        this.deleted = style;
-        this.color = color;
-        this.material = material;
-        this.selected = selected;
+    public String getCategorytitle() {
+        return categorytitle;
     }
 
     public boolean isDeleted() {
@@ -74,7 +66,6 @@ public class ProductDTO {
     }
 
 
-
     public Color getColor() {
         return color;
     }
@@ -85,6 +76,10 @@ public class ProductDTO {
 
     public boolean isSelected() {
         return selected;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
     }
 
     public void setId(int id) {
@@ -127,5 +122,9 @@ public class ProductDTO {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 }

@@ -1,6 +1,7 @@
 package ma.org.comfybackend.security.Services;
 
 import ma.org.comfybackend.security.DTO.CategoryDTO;
+import ma.org.comfybackend.security.DTO.ProductCDTO;
 import ma.org.comfybackend.security.DTO.ProductDTO;
 import ma.org.comfybackend.security.DTO.ReviewDTO;
 import ma.org.comfybackend.security.Entities.CollectionT;
@@ -9,12 +10,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductsService {
 
-    List<Product> listProducts();
+    List<ProductCDTO> listProducts();
 
-    Product addNewProduct(Product product);
+    int addNewProduct(ProductCDTO product);
 
     List<CategoryDTO> listCategory();
 
@@ -28,7 +30,7 @@ public interface ProductsService {
 
     List<ProductDTO> listProductsByCatg(int id,double min, double max);
 
-    ProductDTO showOneProduct(int id);
+    ProductCDTO showOneProduct(int id);
 
     List<ProductDTO> searchProduct(String name);
 
@@ -49,4 +51,8 @@ public interface ProductsService {
     int addNewCategory(CategoryDTO category);
 
     int dropCategory(int id);
+
+    void uploadImageProduct(Optional<MultipartFile[]> file, int idProduct , List<Integer> dimgs) throws IOException;
+
+    int deleteProduct(int iProduct);
 }

@@ -24,4 +24,8 @@ public interface CommandService {
 
 
     ByteArrayInputStream exportPDF(int idCommande);
+
+    List<CommandDTO> displayAllCommands();
+
+    int changeState(int idCommand, String stateValue);
 }

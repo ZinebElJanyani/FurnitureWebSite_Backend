@@ -1,6 +1,7 @@
 package ma.org.comfybackend.security.Services;
 
 import ma.org.comfybackend.security.DTO.CustomerRegisterDTO;
+import ma.org.comfybackend.security.DTO.ItemDTO;
 import ma.org.comfybackend.security.Entities.AppUser;
 import ma.org.comfybackend.security.Entities.Customer;
 import ma.org.comfybackend.security.Mappers.CustomerRegisterMapper;
@@ -15,6 +16,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -135,6 +137,36 @@ public class AccountServiceImpl implements AccountService {
         }
 
         return null;
+
+    }
+
+    @Override
+    public List<CustomerRegisterDTO> showCustomers() {
+        List<Customer>  customers = this.customerRepository.findAll();
+        List<CustomerRegisterDTO> collect = customers.stream().map(c -> this.customerRegisterMapper.fromCustomer_CDTO(c)).collect(Collectors.toList());
+
+
+        return collect;
+    }
+
+    @Override
+    public List<Integer> countCustomerCommands() {
+        List<Customer> customers = this.customerRepository.findAll();
+        List<Integer> result = new ArrayList<>();
+        for(Customer c : customers){
+            result.add(c.getCommands().size());
+        }
+        return result;
+    }
+
+    @Override
+    public List<Integer> countCustomerReviews() {
+        List<Customer> customers = this.customerRepository.findAll();
+        List<Integer> result = new ArrayList<>();
+        for(Customer c : customers){
+            result.add(c.getReviews().size());
+        }
+        return result;
 
     }
 

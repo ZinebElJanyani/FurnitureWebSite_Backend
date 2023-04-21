@@ -10,6 +10,7 @@ import java.sql.Date;
 import java.util.Collection;
 
 public class CommandDTO {
+    int id;
     String ref;
     Date date;
 
@@ -29,7 +30,23 @@ public class CommandDTO {
     float deliveryPrice;
     float couponDiscount;
 
+    private CustomerRegisterDTO customerRegisterDTO;
 
+    public CustomerRegisterDTO getCustomerRegisterDTO() {
+        return customerRegisterDTO;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setCustomerRegisterDTO(CustomerRegisterDTO customerRegisterDTO) {
+        this.customerRegisterDTO = customerRegisterDTO;
+    }
 
     public void setName(String name) {
         this.name = name;

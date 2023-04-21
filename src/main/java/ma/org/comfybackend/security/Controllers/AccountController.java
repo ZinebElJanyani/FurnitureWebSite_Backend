@@ -117,6 +117,22 @@ public class AccountController {
     public byte[] showReviewImg(@PathVariable int id) throws IOException {
         return accountService.getUserPhoto(id);
     }
+
+    @GetMapping(path = "/showCustomers")
+    public List<CustomerRegisterDTO> showCustomers(){
+        return accountService.showCustomers();
+    }
+
+    @GetMapping(path = "/showCommandNbr")
+    public List<Integer> NbreCommands(){
+        return accountService.countCustomerCommands();
+    }
+
+    @GetMapping(path = "/showReviewsNbr")
+    public List<Integer> NbreReview(){
+        return accountService.countCustomerReviews();
+    }
+
 }
 
 

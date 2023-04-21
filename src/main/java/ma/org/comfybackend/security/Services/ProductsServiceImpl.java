@@ -1,26 +1,31 @@
 package ma.org.comfybackend.security.Services;
 
 import ma.org.comfybackend.security.DTO.CategoryDTO;
+import ma.org.comfybackend.security.DTO.ProductCDTO;
 import ma.org.comfybackend.security.DTO.ProductDTO;
 import ma.org.comfybackend.security.DTO.ReviewDTO;
 import ma.org.comfybackend.security.Entities.*;
 import ma.org.comfybackend.security.Mappers.ProductMapper;
 import ma.org.comfybackend.security.Mappers.ReviewMapper;
 import ma.org.comfybackend.security.Repositories.*;
+import org.apache.tika.Tika;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 
 
-@Service
+@Service("singleTransactionsService")
 @Transactional
 public class ProductsServiceImpl implements ProductsService{
     private ProductRepository productRepository;
@@ -30,11 +35,15 @@ public class ProductsServiceImpl implements ProductsService{
     private ReviewMapper reviewMapper;
     private final CustomerRepository customerRepository;
     private ReviewRepository reviewRepository;
+    private ItemRepository itemRepository;
     private final RegionRepository regionRepository;
+    private final PhotosRepository photosRepository;
+
 
     public ProductsServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, CollectionTRepository collectionTRepository,
                                CustomerRepository customerRepository,ReviewRepository reviewRepository,
-                               RegionRepository regionRepository) {
+                               RegionRepository regionRepository,
+                               PhotosRepository photosRepository,ItemRepository itemRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.collectionTRepository = collectionTRepository;
@@ -43,17 +52,56 @@ public class ProductsServiceImpl implements ProductsService{
         this.reviewMapper = new ReviewMapper();
         this.reviewRepository=reviewRepository;
         this.regionRepository = regionRepository;
+        this.photosRepository = photosRepository;
+        this.itemRepository = itemRepository;
     }
 
     @Override
-    public List<Product> listProducts() {
-        return productRepository.findAll();
+    public List<ProductCDTO> listProducts() {
+        List<Product> products = productRepository.findByDeletedIsFalse();
+        List<ProductCDTO> productCDTOS = new ArrayList<>();
+        for(Product p :products){
+            ProductCDTO productCDTO = new ProductCDTO();
+            productCDTO.setId(p.getId());
+            productCDTO.setCreated_at(p.getCreated_at());
+            productCDTO.setColor(p.getColor());
+            productCDTO.setDescription(p.getDescription());
+            productCDTO.setNom(p.getNom());
+            productCDTO.setPrice(p.getPrice());
+            productCDTO.setPromotion(p.getPromotion());
+            productCDTO.setQteStock(p.getQteStock());
+            productCDTO.setSelected(p.isSelected());
+
+
+            if(p.getCategory()!=null) {
+                productCDTO.setCategoryId(p.getCategory().getId());
+                productCDTO.setCategorytitle(p.getCategory().getTitle());
+            }
+            productCDTOS.add(productCDTO);
+        }
+        return productCDTOS;
     }
 
     @Override
-    public Product addNewProduct(Product product) {
-
-        return productRepository.save(product);
+    public int addNewProduct(ProductCDTO productdto) {
+        Product product;
+        if(productdto.getId()!=0){
+            product = productRepository.findById(productdto.getId()).orElse(null);
+        }else{
+            product = new Product();
+        }
+        product.setPrice(productdto.getPrice());
+        product.setQteStock(productdto.getQteStock());
+        product.setPromotion(productdto.getPromotion());
+        product.setDescription(productdto.getDescription());
+        product.setColor(productdto.getColor());
+        product.setCreated_at(productdto.getCreated_at());
+        product.setNom(productdto.getNom());
+        product.setSelected(productdto.isSelected());
+        Category cat = categoryRepository.findById(productdto.getCategoryId());
+        product.setCategory(cat);
+        Product p = productRepository.save(product);
+        return p.getId();
     }
 
     @Override
@@ -92,7 +140,7 @@ public class ProductsServiceImpl implements ProductsService{
         Product p =productRepository.findById(id).get();
         List<byte[]> photos = new ArrayList<>();
         Photos[] imagesN= p.getImages().toArray(new Photos[p.getImages().size()]);
-       System.out.println(imagesN.length);
+
         for(int i=0;i<imagesN.length;i++){
 
             photos.add(Files.readAllBytes(Paths.get(System.getProperty("user.home")+"/homeDecor/products/"+imagesN[i].getImagePath())));
@@ -118,9 +166,28 @@ public class ProductsServiceImpl implements ProductsService{
     }
 
     @Override
-    public ProductDTO showOneProduct(int id) {
-       ProductDTO pDTO = productMapper.fromProduct(productRepository.findById(id).orElse(null)) ;
-        return pDTO;
+    public ProductCDTO showOneProduct(int id) {
+        Product p = productRepository.findById(id).orElse(null);
+        ProductCDTO productCDTO = new ProductCDTO();
+        productCDTO.setId(p.getId());
+        productCDTO.setCreated_at(p.getCreated_at());
+        productCDTO.setColor(p.getColor());
+        productCDTO.setDescription(p.getDescription());
+        productCDTO.setNom(p.getNom());
+        productCDTO.setPrice(p.getPrice());
+        productCDTO.setPromotion(p.getPromotion());
+        productCDTO.setQteStock(p.getQteStock());
+        productCDTO.setSelected(p.isSelected());
+
+
+        if(p.getCategory()!=null) {
+            productCDTO.setCategoryId(p.getCategory().getId());
+            productCDTO.setCategorytitle(p.getCategory().getTitle());
+        }
+
+
+
+        return productCDTO;
     }
 
     @Override
@@ -136,7 +203,7 @@ public class ProductsServiceImpl implements ProductsService{
 
         Review review = reviewMapper.fromReviewDTO(reviewDTO);
         review.setRecommanded(reviewDTO.getIsRecommanded());
-        System.out.println(reviewDTO.getIsRecommanded());
+
         review.setProduct(product);
         review.setCustomer(customer);
 
@@ -235,5 +302,101 @@ public class ProductsServiceImpl implements ProductsService{
         }
         return 0;
     }
+
+    @Override
+    public void uploadImageProduct(Optional<MultipartFile[]> fileList, int idProduct, List<Integer> dimgslistDeletedIMG) throws IOException {
+        Product p = this.productRepository.findById(idProduct).orElse(null);
+
+
+        if(dimgslistDeletedIMG!=null){
+            List<Photos> photosPath = p.getImages().stream().collect(Collectors.toList());
+
+            for(int i=0;i<dimgslistDeletedIMG.size();i++){
+                String oldFilePath = System.getProperty("user.home") + "/homeDecor/products/" + photosPath.get(dimgslistDeletedIMG.get(i).intValue()).getImagePath();
+
+                boolean result = Files.deleteIfExists(Paths.get(oldFilePath));
+                if(result){
+
+                    try {
+                        Photos ph = photosPath.get(dimgslistDeletedIMG.get(i).intValue());
+                        Photos photo1 = this.photosRepository.findById(ph.getId());
+                        this.photosRepository.delete(photo1);
+                    } catch (Exception e) {
+                        // Handle the exception here, e.g. log the error message
+                        System.err.println("Error deleting photo: " + e.getMessage());
+                    }
+                }
+
+            }
+
+        }
+        if(fileList.isPresent() ) {
+            MultipartFile[] files = fileList.orElse(new MultipartFile[0]);
+
+            System.out.println(" i'm here");
+            List<Photos> photos = new ArrayList<>();
+
+            for (int i = 0; i < files.length; i++) {
+
+                String contentType = new Tika().detect(files[i].getInputStream());
+                String extension = "";
+
+                // Set the extension based on the detected content type
+                if (contentType.equals("image/jpeg")) {
+                    extension = "jpg";
+                } else if (contentType.equals("image/png")) {
+                    extension = "png";
+                } else {
+                    throw new IOException("Unsupported image format");
+                }
+                // Delete the existing image file
+
+                Photos photos1 = new Photos();
+                String uniqueName = System.currentTimeMillis() + "_" + new Random().nextInt(1000) + "." + extension;
+
+                photos1.setImagePath(uniqueName);
+                photos1.setProduct(p);
+                this.photosRepository.save(photos1);
+                photos.add(photos1);
+                try {
+                    Files.write(Paths.get(System.getProperty("user.home") + "/homeDecor/products/" + photos1.getImagePath()), files[i].getBytes());
+
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+
+            p.setImages(photos);
+    }
+    }
+
+    @Override
+    public int deleteProduct(int idProduct) {
+      int a =0;
+        Product P = this.productRepository.findById(idProduct).orElse(null);
+        if(P.getCommandItems().size()==0 && P.getReviews().size()==0){
+            List<Photos> photosPath = P.getImages().stream().collect(Collectors.toList());
+            for(Photos photo : photosPath){
+                this.photosRepository.delete(photo);
+            }
+            List<Item> CaddyItems =  P.getItems().stream().collect(Collectors.toList());
+            for(Item item : CaddyItems){
+                this.itemRepository.delete(item);
+            }
+
+            for(Customer c :P.getCustomers()){
+                c.getProducts().remove(P);
+            }
+
+
+
+            this.productRepository.delete(P);
+            a = 1;
+        }else{
+            P.setDeleted(true);
+        }
+        return a;
+    }
+
 
 }

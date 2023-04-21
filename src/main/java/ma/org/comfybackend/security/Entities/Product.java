@@ -26,10 +26,14 @@ public class Product implements Serializable {
     private int qteStock;
     private int promotion;
     private Date created_at;
-    private String style;
+    private boolean deleted;
     private Color color;
     private Material material;
     private boolean selected;
+
+    public boolean isSelected() {
+        return selected;
+    }
 
     @ManyToMany(mappedBy = "products")
     Collection<Customer> customers;
@@ -54,14 +58,14 @@ public class Product implements Serializable {
     @OneToMany(mappedBy = "product")
     Collection<Review> reviews;
 
-    public Product(String nom, String description, double price, int qteStock, int promotion, Date created_at, String style, Color color, Material material, boolean selected, Category category, Collection<Photos> images) {
+    public Product(String nom, String description, double price, int qteStock, int promotion, Date created_at, boolean style, Color color, Material material, boolean selected, Category category, Collection<Photos> images) {
         this.nom = nom;
         this.description = description;
         this.price = price;
         this.qteStock = qteStock;
         this.promotion = promotion;
         this.created_at = created_at;
-        this.style = style;
+        this.deleted = style;
         this.color = color;
         this.material = material;
         this.selected = selected;

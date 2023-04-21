@@ -27,4 +27,10 @@ public interface AccountService {
     void uploadImageUser(MultipartFile file, int idCustomer) throws IOException;
 
     byte[] getUserPhoto(int id) throws IOException;
+
+    List<CustomerRegisterDTO> showCustomers();
+
+    List<Integer> countCustomerCommands();
+
+    List<Integer> countCustomerReviews();
 }

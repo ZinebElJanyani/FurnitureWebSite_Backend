@@ -12,4 +12,9 @@ public class CmmandMapper {
         BeanUtils.copyProperties(commandDTO,command);
         return command;
     }
+    public CommandDTO fromCommand(Command command){
+        CommandDTO commandDTO = new CommandDTO();
+        BeanUtils.copyProperties(command,commandDTO);
+        return commandDTO;
+    }
 }

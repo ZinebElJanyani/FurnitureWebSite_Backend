@@ -5,6 +5,8 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import ma.org.comfybackend.security.DTO.*;
+import ma.org.comfybackend.security.Enumerations.CommandState;
+import ma.org.comfybackend.security.Mappers.CustomerRegisterMapper;
 import ma.org.comfybackend.security.Mappers.ProductMapper;
 import ma.org.comfybackend.security.Repositories.*;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -32,6 +34,8 @@ public class CommandServiceImpl implements CommandService{
     CityRepository cityRepository;
     CustomerRepository customerRepository;
     EmailService emailService;
+    private CustomerRegisterMapper customerRegisterMapper;
+
     private final DeliveryAdressRepository deliveryAdressRepository;
     CmmandMapper commandMapper;
     private final CommandRepository commandRepository;
@@ -60,6 +64,7 @@ public class CommandServiceImpl implements CommandService{
         this.commanditemRepository = commanditemR;
         this.productRepository = productRepository;
         this.productMapper = new ProductMapper();
+        this.customerRegisterMapper = new CustomerRegisterMapper();
     }
 
     @Override
@@ -481,6 +486,25 @@ public class CommandServiceImpl implements CommandService{
 
 
         return new ByteArrayInputStream(out.toByteArray());
+    }
+
+    @Override
+    public List<CommandDTO> displayAllCommands() {
+        List<Command> commands = this.commandRepository.findAll();
+        List<CommandDTO> collect = commands.stream().map(c -> this.commandMapper.fromCommand(c)).collect(Collectors.toList());
+
+        for(int i=0;i<commands.size();i++){
+            collect.get(i).setCustomerRegisterDTO(this.customerRegisterMapper.fromCustomer_CDTO(commands.get(i).getCustomer()));
+        }
+        return collect;
+    }
+
+    @Override
+    public int changeState(int idCommand, String stateValue) {
+        Command command = this.commandRepository.findById(idCommand).orElse(null);
+        command.setCommandState(CommandState.valueOf(stateValue));
+        this.commandRepository.save(command);
+        return 1;
     }
 
 }
