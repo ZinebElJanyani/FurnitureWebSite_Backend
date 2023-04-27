@@ -16,7 +16,7 @@ public class RecommandationController {
         this.recommandationService = recommandationService;
     }
     @GetMapping(path = "/getRecommandation/{id_customer}")
-    public List<String> showProducts(@PathVariable int id_customer){
+    public List<ProductDTO> showProducts(@PathVariable int id_customer){
         return recommandationService.listRecommandedProducts(id_customer);
     }
 }

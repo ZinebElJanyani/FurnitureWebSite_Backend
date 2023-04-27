@@ -53,16 +53,27 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AppUser addNewUserr(AppUser user) {
+        String pass=user.getPassword();
+        user.setPassword(passwordEncoder.encode(pass));
             return userRepositiry.save(user);
     }
 
     @Override
     public CustomerRegisterDTO loadUserByUserName(String username) {
         Customer customer = customerRepository.findByName(username);
+        CustomerRegisterDTO customerRegisterDTO;
+        if(customer !=null) {
+            customerRegisterDTO  =customerRegisterMapper.fromCustomer_CDTO(customer);
+        }else {
+            AppUser user = this.userRepositiry.findByName(username);
+            customerRegisterDTO = customerRegisterMapper.fromUser(user);
 
-        System.out.println(customer.getName());
-        System.out.println(customer.getPhone());
-        return customerRegisterMapper.fromCustomer_CDTO(customer);
+        }
+
+        System.out .println(customerRegisterDTO.getId());
+        System.out .println(customerRegisterDTO.getEmail());
+
+        return customerRegisterDTO;
     }
     @Override
     public AppUser loadUserByEmail(String email) {

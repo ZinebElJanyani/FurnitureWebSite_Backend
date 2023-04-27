@@ -2,6 +2,7 @@ package ma.org.comfybackend.security.Repositories;
 
 import ma.org.comfybackend.security.Entities.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -16,4 +17,10 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     List<Product> findByNomContains(String val);
 
     List<Product> findByDeletedIsFalse();
+
+    @Query("SELECT COUNT(p) FROM Product p WHERE MONTH(p.created_at) = MONTH(CURRENT_DATE()) AND YEAR(p.created_at) = YEAR(CURRENT_DATE())")
+    Long countProductsInCurrentMonth();
+
+
+
 }

@@ -42,11 +42,10 @@ public class ComfyBackendApplication {
      CommandLineRunner start(AccountService accountService) {
          return args -> {
              AppUser u = new AppUser();
-             u.setName("dina");
+             u.setName("zineb el janyani");
              u.setPassword("123");
-             u.setRole("user");
-             u.setEmail("dina_fthi@gmail.com");
-
+             u.setRole("admin");
+             u.setEmail("zinebeljanyani@gmail.com");
              accountService.addNewUserr(u);
 
              Customer c = new Customer();

@@ -12,4 +12,6 @@ public interface ItemRepository extends JpaRepository<Item,Long> {
 
     Item findByProduct(Product product);
     List<Item> findByCaddy(Caddy c);
+
+
 }

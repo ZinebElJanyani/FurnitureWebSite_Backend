@@ -11,7 +11,8 @@ public interface CustomerRepository extends JpaRepository<Customer,Integer> {
     Customer findByEmail(String name);
     Customer findByName(String name);
 
-
+    @Query("SELECT COUNT(c) FROM Customer c WHERE MONTH(c.created_at) = MONTH(CURRENT_DATE()) AND YEAR(c.created_at) = YEAR(CURRENT_DATE())")
+    Long countCustomersInCurrentMonth();
 
 
 }

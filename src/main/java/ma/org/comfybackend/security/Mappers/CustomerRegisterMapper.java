@@ -21,4 +21,9 @@ public class CustomerRegisterMapper {
         BeanUtils.copyProperties(customerRegisterDTO,user);
         return user;
     }
+    public CustomerRegisterDTO fromUser(AppUser appUser){
+        CustomerRegisterDTO customerDTO = new CustomerRegisterDTO();
+        BeanUtils.copyProperties(appUser,customerDTO);
+        return customerDTO;
+    }
 }
