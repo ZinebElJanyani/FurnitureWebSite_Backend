@@ -15,6 +15,8 @@ public interface CommandRepository extends JpaRepository<Command, Integer> {
     @Query("SELECT COUNT(c) FROM Command c WHERE MONTH(c.date) = MONTH(CURRENT_DATE()) AND YEAR(c.date) = YEAR(CURRENT_DATE())")
     Long countCommandsInCurrentMonth();
 
+
+
     @Query("SELECT SUM(c.totalPrice) FROM Command c WHERE c.commandState <> :exclude")
     Long countProfits(@Param("exclude") CommandState nameToExclude);
 

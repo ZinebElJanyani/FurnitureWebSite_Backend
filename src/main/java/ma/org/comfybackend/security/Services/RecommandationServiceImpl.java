@@ -40,9 +40,9 @@ public class RecommandationServiceImpl implements RecommandationService {
         List<ProductDTO> productDTOS = new ArrayList<>();
         for(String s:recommendedProducts){
             System.out.println(s+"Integer.valueOf(s) ="+Integer.valueOf(s));
-            /*ça ne marche pas juste parceque j'ai utiliser des id des produits qui n'existe pas
-           /* Product product = this.productRepository.findById(Integer.valueOf(s)).orElse(null);
-        productDTOS.add(this.productMapper.fromProduct(product));*/
+            /*ça ne marche pas juste parceque j'ai utiliser des id des produits qui n'existe pas*/
+            Product product = this.productRepository.findById(Integer.valueOf(s)).orElse(null);
+        productDTOS.add(this.productMapper.fromProduct(product));
         }
 
         return productDTOS;

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -27,5 +28,19 @@ public class ChartController {
     @GetMapping(path = "/mostOrdered")
     public Map<String,Object>  mostOrdered(){
         return this.chartService.getMostOrdered();
+    }
+
+    @GetMapping(path = "/salesCategory")
+    public Map<String,Long> salesPerCategory(){
+        return this.chartService.getSalesPerCategory();
+    }
+
+    @GetMapping(path = "/ratingCount")
+    public List<Long> countRating(){
+        return this.chartService.getCountRating();
+    }
+    @GetMapping(path = "/salesMonth")
+    public List<Long> SalesPerMonths(){
+        return this.chartService.getSalesPerMonths();
     }
 }

@@ -46,6 +46,7 @@ public class ProductController {
 
     @PostMapping(path = "/new")
     public int AddProduct(@RequestBody ProductCDTO product){
+
         return productService.addNewProduct(product);
     }
 
@@ -61,6 +62,7 @@ public class ProductController {
 
     @PostMapping(path = "/newCategory")
     public int AddCategory(@RequestBody CategoryDTO category){
+
         return productService.addNewCategory(category);
     }
 
@@ -120,6 +122,11 @@ public class ProductController {
     @GetMapping(path = "/products")
     public List<ProductDTO> showProducts(@RequestParam List<Integer> ids){
         return productService.listProducts(ids);
+    }
+
+    @GetMapping(path = "/favoriteProducts/{id}")
+    public List<ProductDTO> showFavoriteProductForUser(@PathVariable int id){
+        return productService.listFavoriteProducts(id);
     }
 
     @PostMapping(path = "/addFavorite/{id_customer}")

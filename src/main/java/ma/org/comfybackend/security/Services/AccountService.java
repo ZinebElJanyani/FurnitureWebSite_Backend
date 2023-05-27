@@ -33,4 +33,6 @@ public interface AccountService {
     List<Integer> countCustomerCommands();
 
     List<Integer> countCustomerReviews();
+
+    String findNameById(int id);
 }

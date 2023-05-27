@@ -55,4 +55,6 @@ public interface ProductsService {
     void uploadImageProduct(Optional<MultipartFile[]> file, int idProduct , List<Integer> dimgs) throws IOException;
 
     int deleteProduct(int iProduct);
+
+    List<ProductDTO> listFavoriteProducts(int id);
 }

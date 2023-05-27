@@ -133,6 +133,10 @@ public class AccountController {
         return accountService.countCustomerReviews();
     }
 
+    @GetMapping(path = "/name/{id}")
+    public String CustomerName(@PathVariable int id){
+        return accountService.findNameById(id);
+    }
 }
 
 

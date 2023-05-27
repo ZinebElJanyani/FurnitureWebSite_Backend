@@ -181,5 +181,10 @@ public class AccountServiceImpl implements AccountService {
 
     }
 
+    @Override
+    public String findNameById(int id) {
+        return this.customerRepository.findById(id).orElse(null).getName();
+    }
+
 
 }

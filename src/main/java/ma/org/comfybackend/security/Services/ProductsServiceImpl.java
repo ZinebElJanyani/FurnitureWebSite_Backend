@@ -17,10 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -85,7 +82,9 @@ public class ProductsServiceImpl implements ProductsService{
     @Override
     public int addNewProduct(ProductCDTO productdto) {
         Product product;
+
         if(productdto.getId()!=0){
+
             product = productRepository.findById(productdto.getId()).orElse(null);
         }else{
             product = new Product();
@@ -150,6 +149,7 @@ public class ProductsServiceImpl implements ProductsService{
 
     @Override
     public byte[] listProductsFirstPhoto(int id) throws IOException {
+
         Product p =productRepository.findById(id).get();
 
         Photos[] imagesN= p.getImages().toArray(new Photos[p.getImages().size()]);
@@ -161,6 +161,11 @@ public class ProductsServiceImpl implements ProductsService{
     @Override
     public List<ProductDTO> listProductsByCatg(int id,double min , double max) {
         List<Product> products = productRepository.findByCategoryIdAndPriceBetween(id,min,max);
+        System.out.println("koko"+min+":"+max);
+        for(Product p : products){
+            System.out.println("Nom:"+p.getNom());
+            System.out.println("Category:"+p.getCategory().getTitle());
+        }
         List<ProductDTO> collect = products.stream().map(p -> this.productMapper.fromProduct(p)).collect(Collectors.toList());
         return collect;
     }
@@ -396,6 +401,14 @@ public class ProductsServiceImpl implements ProductsService{
             P.setDeleted(true);
         }
         return a;
+    }
+
+    @Override
+    public List<ProductDTO> listFavoriteProducts(int id) {
+        Customer customer = this.customerRepository.findById(id).orElse(null);
+        Collection<Product> products = customer.getProducts();
+        List<ProductDTO> collect = products.stream().map(p -> this.productMapper.fromProduct(p)).collect(Collectors.toList());
+        return collect;
     }
 
 
