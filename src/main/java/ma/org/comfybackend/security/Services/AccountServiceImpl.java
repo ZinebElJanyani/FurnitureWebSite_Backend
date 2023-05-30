@@ -1,12 +1,17 @@
 package ma.org.comfybackend.security.Services;
 
+import ma.org.comfybackend.security.DTO.AppUserDTO;
 import ma.org.comfybackend.security.DTO.CustomerRegisterDTO;
 import ma.org.comfybackend.security.DTO.ItemDTO;
 import ma.org.comfybackend.security.Entities.AppUser;
+import ma.org.comfybackend.security.Entities.Command;
 import ma.org.comfybackend.security.Entities.Customer;
+import ma.org.comfybackend.security.Entities.Product;
 import ma.org.comfybackend.security.Mappers.CustomerRegisterMapper;
 import ma.org.comfybackend.security.Repositories.AppUserRepository;
+import ma.org.comfybackend.security.Repositories.CommandRepository;
 import ma.org.comfybackend.security.Repositories.CustomerRepository;
+import ma.org.comfybackend.security.Repositories.ProductRepository;
 import org.apache.tika.Tika;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,7 +21,10 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,13 +34,18 @@ public class AccountServiceImpl implements AccountService {
 
     private AppUserRepository userRepositiry;
     private CustomerRepository customerRepository;
+    private ProductRepository productRepository;
+    private  CommandRepository commandRepository;
+
     private PasswordEncoder passwordEncoder;
     private CustomerRegisterMapper customerRegisterMapper;
-    public AccountServiceImpl(AppUserRepository userRepositiry, CustomerRepository customerRepository, PasswordEncoder passwordEncoder) {
+    public AccountServiceImpl(CommandRepository commandRepository,ProductRepository productRepository,AppUserRepository userRepositiry, CustomerRepository customerRepository, PasswordEncoder passwordEncoder) {
         this.userRepositiry = userRepositiry;
         this.customerRepository = customerRepository;
         this.passwordEncoder = passwordEncoder;
         this.customerRegisterMapper = new CustomerRegisterMapper();
+        this.productRepository = productRepository;
+        this.commandRepository = commandRepository;
     }
 
     @Override
@@ -112,8 +125,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void uploadImageUser(MultipartFile file, int idCustomer) throws IOException {
-        Customer customer = customerRepository.findById(idCustomer).orElse(null);
+    public void uploadImageUser(MultipartFile file, int idCustomerorUser) throws IOException {
+        Customer customer = customerRepository.findById(idCustomerorUser).orElse(null);
         String contentType = new Tika().detect(file.getInputStream());
         String extension = "";
 
@@ -125,26 +138,47 @@ public class AccountServiceImpl implements AccountService {
         } else {
             throw new IOException("Unsupported image format");
         }
-        // Delete the existing image file
-        String oldFilePath = System.getProperty("user.home") + "/homeDecor/userImages/" + customer.getPhotoPath();
-        Files.deleteIfExists(Paths.get(oldFilePath));
+        if(customer!=null) {
+            // Delete the existing image file
+            String oldFilePath = System.getProperty("user.home") + "/homeDecor/userImages/" + customer.getPhotoPath();
+            Files.deleteIfExists(Paths.get(oldFilePath));
 
-        customer.setPhotoPath(idCustomer + "." + extension);
-        try {
-            Files.write(Paths.get(System.getProperty("user.home") + "/homeDecor/userImages/" + customer.getPhotoPath()), file.getBytes());
-            customerRepository.save(customer);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
+            customer.setPhotoPath(idCustomerorUser + "." + extension);
+            try {
+                Files.write(Paths.get(System.getProperty("user.home") + "/homeDecor/userImages/" + customer.getPhotoPath()), file.getBytes());
+                customerRepository.save(customer);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }else{
+
+            AppUser user = userRepositiry.findById(idCustomerorUser).orElse(null);
+            String oldFilePath = System.getProperty("user.home") + "/homeDecor/userImages/" + user.getPhotoPath();
+            Files.deleteIfExists(Paths.get(oldFilePath));
+
+            user.setPhotoPath(idCustomerorUser + "." + extension);
+            try {
+                Files.write(Paths.get(System.getProperty("user.home") + "/homeDecor/userImages/" + user.getPhotoPath()), file.getBytes());
+                this.userRepositiry.save(user);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         }
-
     }
 
     @Override
     public byte[] getUserPhoto(int id) throws IOException {
         Customer customer = customerRepository.findById(id).orElse(null);
-        if(!customer.getPhotoPath().equals("")){
+        if(customer!=null && !customer.getPhotoPath().equals("")){
             byte[] result = Files.readAllBytes(Paths.get(System.getProperty("user.home")+"/homeDecor/userImages/"+customer.getPhotoPath()));
             return result;
+        }else{
+            AppUser user = userRepositiry.findById(id).orElse(null);
+                System.out.println(user.getPhotoPath());
+            if(user!=null && !user.getPhotoPath().equals("")){
+                byte[] result = Files.readAllBytes(Paths.get(System.getProperty("user.home")+"/homeDecor/userImages/"+user.getPhotoPath()));
+                return result;
+            }
         }
 
         return null;
@@ -184,6 +218,45 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public String findNameById(int id) {
         return this.customerRepository.findById(id).orElse(null).getName();
+    }
+
+    @Override
+    public AppUser editUser(AppUserDTO appUserDTO) {
+        AppUser user = userRepositiry.findById(appUserDTO.getId()).orElse(null);
+        user.setName(appUserDTO.getName());
+        user.setEmail(appUserDTO.getEmail());
+        user.setPhone(appUserDTO.getPhone());
+
+        AppUser c = this.userRepositiry.save(user);
+
+        return c;
+    }
+
+    @Override
+    public void setLastConxTime(int id, Date lastTime) {
+        AppUser user = userRepositiry.findById(id).orElse(null);
+        user.setUpdated_at(lastTime);
+        System.out.println(user.getUpdated_at());
+        userRepositiry.save(user);
+    }
+
+    @Override
+    public List<Integer> getNotifications(int id) {
+        AppUser user = this.userRepositiry.findById(id).orElse(null);
+    List<Product>  outOfStocks = this.productRepository.findByQteStockEquals(0);
+    List<Command> newCommands = this.commandRepository.findByDateAfter(user.getUpdated_at());
+    Command c = this.commandRepository.findFirstByOrderByDateDesc();
+
+        Long durationMillis = (new Date()).getTime()-c.getDate().getTime();
+        Duration duration = Duration.ofMillis(durationMillis);
+        int seconds = (int) duration.getSeconds();
+
+    List<Integer> counts = new ArrayList<>();
+    counts.add(outOfStocks.size());
+    counts.add(newCommands.size());
+        counts.add(seconds);
+
+        return counts;
     }
 
 

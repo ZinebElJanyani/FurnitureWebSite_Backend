@@ -7,10 +7,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Date;
 import java.util.List;
 
 public interface CommandRepository extends JpaRepository<Command, Integer> {
     List<Command> findByCustomer(Customer c);
+
+    List<Command>findByDateAfter(Date d);
+
+    Command findFirstByOrderByDateDesc();
+
 
     @Query("SELECT COUNT(c) FROM Command c WHERE MONTH(c.date) = MONTH(CURRENT_DATE()) AND YEAR(c.date) = YEAR(CURRENT_DATE())")
     Long countCommandsInCurrentMonth();

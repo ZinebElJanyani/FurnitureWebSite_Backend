@@ -18,6 +18,8 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
 
     List<Product> findByDeletedIsFalse();
 
+    List<Product> findByQteStockEquals(int val);
+
     @Query("SELECT COUNT(p) FROM Product p WHERE MONTH(p.created_at) = MONTH(CURRENT_DATE()) AND YEAR(p.created_at) = YEAR(CURRENT_DATE())")
     Long countProductsInCurrentMonth();
 

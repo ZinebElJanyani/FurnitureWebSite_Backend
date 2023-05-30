@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ma.org.comfybackend.security.DTO.AppUserDTO;
 import ma.org.comfybackend.security.DTO.CustomerRegisterDTO;
 import ma.org.comfybackend.security.Entities.AppUser;
 import ma.org.comfybackend.security.Entities.Customer;
@@ -24,7 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
-import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -104,10 +107,13 @@ public class AccountController {
     }*/
 
     @PutMapping(path = "/edit")
-    public AppUser editUser(@RequestBody CustomerRegisterDTO customerRegisterDTO){
+    public AppUser editCustomer(@RequestBody CustomerRegisterDTO customerRegisterDTO){
         return accountService.editCustomer(customerRegisterDTO);
     }
-
+    @PutMapping(path = "/editUser")
+    public AppUser editUser(@RequestBody AppUserDTO appUserDTO){
+        return accountService.editUser(appUserDTO);
+    }
     @PostMapping(path = "/uploadImageUser/{idCustomer}")
     public void uploadImageReview(MultipartFile file, @PathVariable int idCustomer) throws IOException {
         accountService.uploadImageUser(file, idCustomer);
@@ -137,6 +143,22 @@ public class AccountController {
     public String CustomerName(@PathVariable int id){
         return accountService.findNameById(id);
     }
+
+
+    @PostMapping(path = "/logout/{id}")
+    public void logout(@PathVariable int id, @RequestBody String lastTime) throws ParseException {
+        System.out.println(lastTime);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        Date date = dateFormat.parse(lastTime);
+        accountService.setLastConxTime(id,date);
+    }
+
+    @GetMapping(path = "/notifications/{id}")
+    public List<Integer> notifications(@PathVariable int id){
+        return accountService.getNotifications(id);
+    }
+
+
 }
 
 

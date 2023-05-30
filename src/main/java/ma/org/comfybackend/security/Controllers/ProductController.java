@@ -134,5 +134,14 @@ public class ProductController {
         return productService.addFavorite(ids,id_customer);
     }
 
+    @GetMapping(path = "/outOFstock")
+    public List<ProductDTO> showProductsOutStock(){
+        return productService.listProductsOutStock();
+    }
 
+    @PostMapping(path = "/feedStock/{id}")
+    public void feedStock(@PathVariable int id,@RequestBody String value) throws IOException {
+      int v = Integer.parseInt(value);
+       productService.setSock(id,v);
+    }
 }

@@ -411,5 +411,19 @@ public class ProductsServiceImpl implements ProductsService{
         return collect;
     }
 
+    @Override
+    public List<ProductDTO> listProductsOutStock() {
+        List<Product>  outOfStocks = this.productRepository.findByQteStockEquals(0);
+        List<ProductDTO> collect = outOfStocks.stream().map(p -> this.productMapper.fromProduct(p)).collect(Collectors.toList());
+        return collect;
+    }
+
+    @Override
+    public void setSock(int id, int value) {
+        Product p = this.productRepository.findById(id).orElse(null);
+        p.setQteStock(value);
+        productRepository.save(p);
+    }
+
 
 }

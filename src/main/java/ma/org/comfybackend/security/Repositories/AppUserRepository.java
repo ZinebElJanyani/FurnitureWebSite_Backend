@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface AppUserRepository extends JpaRepository<AppUser,Long> {
+public interface AppUserRepository extends JpaRepository<AppUser,Integer> {
 
     AppUser findByEmail(String name);
     AppUser findByName(String name);

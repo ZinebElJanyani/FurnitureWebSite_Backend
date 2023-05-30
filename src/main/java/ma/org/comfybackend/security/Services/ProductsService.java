@@ -57,4 +57,8 @@ public interface ProductsService {
     int deleteProduct(int iProduct);
 
     List<ProductDTO> listFavoriteProducts(int id);
+
+    List<ProductDTO> listProductsOutStock();
+
+    void setSock(int id, int value);
 }
