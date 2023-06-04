@@ -1,6 +1,7 @@
 package ma.org.comfybackend.security.Repositories;
 
 import ma.org.comfybackend.security.Entities.Product;
+import ma.org.comfybackend.security.Enumerations.Color;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -10,11 +11,12 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     @Override
     List<Product> findAll();
 
-    List<Product>findBySelectedIsTrueAndPriceBetween(double min,double max);
+    List<Product>findBySelectedIsTrueAndDeletedIsFalseAndPriceBetweenAndColorLike(double min,double max ,Color c);
+    List<Product>findBySelectedIsTrueAndDeletedIsFalseAndPriceBetween(double min,double max);
 
-    List<Product>findByCategoryIdAndPriceBetween(int id,double min,double max);
-
-    List<Product> findByNomContains(String val);
+    List<Product>findByCategoryIdAndDeletedIsFalseAndPriceBetween(int id,double min,double max);
+    List<Product>findByCategoryIdAndDeletedIsFalseAndPriceBetweenAndColorLike(int id, double min,double max ,Color c);
+    List<Product> findByNomContainsAndDeletedIsFalse(String val);
 
     List<Product> findByDeletedIsFalse();
 

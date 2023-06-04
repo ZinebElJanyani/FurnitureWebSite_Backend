@@ -93,4 +93,9 @@ public class CommandController {
     public int createCreditCard(@PathVariable int idCommand,@RequestParam("state") String stateValue){
         return commandService.changeState(idCommand,stateValue);
     }
+
+    @GetMapping(path = "/showCommand/{id}")
+    public CommandShowDTO getOneCommand(@PathVariable int id) {
+        return commandService.displayOnCommande(id);
+    }
 }

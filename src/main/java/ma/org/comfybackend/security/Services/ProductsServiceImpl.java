@@ -5,6 +5,7 @@ import ma.org.comfybackend.security.DTO.ProductCDTO;
 import ma.org.comfybackend.security.DTO.ProductDTO;
 import ma.org.comfybackend.security.DTO.ReviewDTO;
 import ma.org.comfybackend.security.Entities.*;
+import ma.org.comfybackend.security.Enumerations.Color;
 import ma.org.comfybackend.security.Mappers.ProductMapper;
 import ma.org.comfybackend.security.Mappers.ReviewMapper;
 import ma.org.comfybackend.security.Repositories.*;
@@ -57,6 +58,7 @@ public class ProductsServiceImpl implements ProductsService{
     public List<ProductCDTO> listProducts() {
         List<Product> products = productRepository.findByDeletedIsFalse();
         List<ProductCDTO> productCDTOS = new ArrayList<>();
+        int total;
         for(Product p :products){
             ProductCDTO productCDTO = new ProductCDTO();
             productCDTO.setId(p.getId());
@@ -68,7 +70,15 @@ public class ProductsServiceImpl implements ProductsService{
             productCDTO.setPromotion(p.getPromotion());
             productCDTO.setQteStock(p.getQteStock());
             productCDTO.setSelected(p.isSelected());
-
+            if(p.getReviews().size()!=0){
+            total =0;
+            for(Review r: p.getReviews()){
+                total+=r.getNbre_etoile();
+            }
+            productCDTO.setStars((total/p.getReviews().size()));
+            }else{
+                productCDTO.setStars(0);
+            }
 
             if(p.getCategory()!=null) {
                 productCDTO.setCategoryId(p.getCategory().getId());
@@ -126,10 +136,29 @@ public class ProductsServiceImpl implements ProductsService{
     }
 
     @Override
-    public List<ProductDTO> listSelectedProducts(double min , double max) {
+    public List<ProductDTO> listSelectedProducts(double min , double max,String color) {
+        List<Product> products;
+        if(color.equals("null")){
+            products = productRepository.findBySelectedIsTrueAndDeletedIsFalseAndPriceBetween(min,max);
+        }else{
+            Color color1 = Color.valueOf(color);
+            products = productRepository.findBySelectedIsTrueAndDeletedIsFalseAndPriceBetweenAndColorLike(min,max,color1);
 
-        List<Product> products = productRepository.findBySelectedIsTrueAndPriceBetween(min,max);
+        }
         List<ProductDTO> collect = products.stream().map(p -> this.productMapper.fromProduct(p)).collect(Collectors.toList());
+
+        int total;
+        for(int i=0;i<products.size();i++){
+            if(products.get(i).getReviews().size()!=0) {
+                total = 0;
+                for (Review r : products.get(i).getReviews()) {
+                    total += r.getNbre_etoile();
+                }
+                collect.get(i).setStars((total / products.get(i).getReviews().size()));
+            }else{
+                collect.get(i).setStars(0);
+            }
+        }
         return collect;
     }
 
@@ -159,14 +188,35 @@ public class ProductsServiceImpl implements ProductsService{
     }
 
     @Override
-    public List<ProductDTO> listProductsByCatg(int id,double min , double max) {
-        List<Product> products = productRepository.findByCategoryIdAndPriceBetween(id,min,max);
-        System.out.println("koko"+min+":"+max);
+    public List<ProductDTO> listProductsByCatg(int id,double min , double max,String color) {
+        List<Product> products;
+        if(color.equals("null")){
+         products = productRepository.findByCategoryIdAndDeletedIsFalseAndPriceBetween(id,min,max);
+        }else{
+            Color color1 = Color.valueOf(color);
+            products = productRepository.findByCategoryIdAndDeletedIsFalseAndPriceBetweenAndColorLike(id,min,max,color1);
+
+        }
+
+       /* System.out.println("koko"+min+":"+max);
         for(Product p : products){
             System.out.println("Nom:"+p.getNom());
             System.out.println("Category:"+p.getCategory().getTitle());
-        }
+        }*/
+
         List<ProductDTO> collect = products.stream().map(p -> this.productMapper.fromProduct(p)).collect(Collectors.toList());
+        int total;
+        for(int i=0;i<products.size();i++){
+            if(products.get(i).getReviews().size()!=0) {
+                total = 0;
+                for (Review r : products.get(i).getReviews()) {
+                    total += r.getNbre_etoile();
+                }
+                collect.get(i).setStars((total / products.get(i).getReviews().size()));
+            }else{
+                collect.get(i).setStars(0);
+            }
+        }
         return collect;
     }
 
@@ -183,7 +233,15 @@ public class ProductsServiceImpl implements ProductsService{
         productCDTO.setPromotion(p.getPromotion());
         productCDTO.setQteStock(p.getQteStock());
         productCDTO.setSelected(p.isSelected());
-
+        int total =0;
+        if(p.getReviews().size()!=0) {
+            for (Review r : p.getReviews()) {
+                total += r.getNbre_etoile();
+            }
+            productCDTO.setStars((total / p.getReviews().size()));
+        }else{
+            productCDTO.setStars(0);
+        }
 
         if(p.getCategory()!=null) {
             productCDTO.setCategoryId(p.getCategory().getId());
@@ -197,7 +255,20 @@ public class ProductsServiceImpl implements ProductsService{
 
     @Override
     public List<ProductDTO> searchProduct(String name) {
-        List<ProductDTO> collect = productRepository.findByNomContains(name).stream().map(p -> productMapper.fromProduct(p)).collect(Collectors.toList());
+        List<Product> products = productRepository.findByNomContainsAndDeletedIsFalse(name);
+        List<ProductDTO> collect = products.stream().map(p -> this.productMapper.fromProduct(p)).collect(Collectors.toList());
+        int total;
+        for(int i=0;i<products.size();i++){
+            if(products.get(i).getReviews().size()!=0) {
+                total = 0;
+                for (Review r : products.get(i).getReviews()) {
+                    total += r.getNbre_etoile();
+                }
+                collect.get(i).setStars((total / products.get(i).getReviews().size()));
+            }else{
+                collect.get(i).setStars(0);
+            }
+        }
         return collect;
     }
 
@@ -259,7 +330,18 @@ public class ProductsServiceImpl implements ProductsService{
         List<ProductDTO> productDTOS = new ArrayList<>();
         for(Integer i :ids){
             Product p = productRepository.findById(i).orElse(null);
-            productDTOS.add(this.productMapper.fromProduct(p));
+            ProductDTO productDTO  = this.productMapper.fromProduct(p);
+            int total =0;
+            if(p.getReviews().size()!=0){
+            for(Review r: p.getReviews()){
+                total+=r.getNbre_etoile();
+            }
+            productDTO.setStars((total/p.getReviews().size()));
+            }else {
+                productDTO.setStars(0);
+            }
+
+            productDTOS.add(productDTO);
         }
         return productDTOS;
     }
@@ -423,6 +505,12 @@ public class ProductsServiceImpl implements ProductsService{
         Product p = this.productRepository.findById(id).orElse(null);
         p.setQteStock(value);
         productRepository.save(p);
+    }
+
+    @Override
+    public int getStarsReview() {
+
+        return 0;
     }
 
 

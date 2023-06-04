@@ -18,6 +18,15 @@ public class ProductDTO {
     private Material material;
     private boolean selected;
 
+    private double stars;
+
+    public void setStars(double stars) {
+        this.stars = stars;
+    }
+
+    public double getStars() {
+        return stars;
+    }
 
     public ProductDTO() {
 

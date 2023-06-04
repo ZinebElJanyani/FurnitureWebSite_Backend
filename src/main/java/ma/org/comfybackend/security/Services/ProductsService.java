@@ -22,13 +22,13 @@ public interface ProductsService {
 
     List<CollectionT> listCollection();
 
-    List<ProductDTO> listSelectedProducts(double min, double max);
+    List<ProductDTO> listSelectedProducts(double min, double max,String color);
 
     List<byte[]> listProductsPhotos(int id) throws IOException;
 
     byte[] listProductsFirstPhoto(int id) throws IOException;
 
-    List<ProductDTO> listProductsByCatg(int id,double min, double max);
+    List<ProductDTO> listProductsByCatg(int id,double min, double max,String color);
 
     ProductCDTO showOneProduct(int id);
 
@@ -61,4 +61,6 @@ public interface ProductsService {
     List<ProductDTO> listProductsOutStock();
 
     void setSock(int id, int value);
+
+    int getStarsReview();
 }

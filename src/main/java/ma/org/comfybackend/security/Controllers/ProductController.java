@@ -70,13 +70,13 @@ public class ProductController {
     public int dropCategory(@PathVariable int id){
         return productService.dropCategory(id);
     }
-    @GetMapping(path = "/selected_P/{min}/{max}")
-    public List<ProductDTO> showSelectedProducts(@PathVariable double min, @PathVariable double max){
-        return productService.listSelectedProducts(min,max);
+    @GetMapping(path = "/selected_P/{min}/{max}/{color}")
+    public List<ProductDTO> showSelectedProducts(@PathVariable double min, @PathVariable double max,@PathVariable String color){
+        return productService.listSelectedProducts(min,max,color);
     }
-    @GetMapping(path = "/products_catg/{id}/{min}/{max}")
-    public List<ProductDTO> showProductsByCatg(@PathVariable int id,@PathVariable double min, @PathVariable double max){
-        return productService.listProductsByCatg(id,min,max);
+    @GetMapping(path = "/products_catg/{id}/{min}/{max}/{color}")
+    public List<ProductDTO> showProductsByCatg(@PathVariable int id,@PathVariable double min, @PathVariable double max,@PathVariable String color){
+        return productService.listProductsByCatg(id,min,max,color);
     }
 
     @GetMapping(path = "/productP/{id}")
@@ -144,4 +144,6 @@ public class ProductController {
       int v = Integer.parseInt(value);
        productService.setSock(id,v);
     }
+
+
 }

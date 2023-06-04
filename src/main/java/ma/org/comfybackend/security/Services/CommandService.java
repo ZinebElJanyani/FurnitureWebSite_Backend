@@ -28,4 +28,6 @@ public interface CommandService {
     List<CommandDTO> displayAllCommands();
 
     int changeState(int idCommand, String stateValue);
+
+    CommandShowDTO displayOnCommande(int id);
 }

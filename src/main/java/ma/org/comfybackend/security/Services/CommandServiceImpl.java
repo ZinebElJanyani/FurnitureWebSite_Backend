@@ -1,17 +1,14 @@
 package ma.org.comfybackend.security.Services;
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import ma.org.comfybackend.security.DTO.*;
 import ma.org.comfybackend.security.Enumerations.CommandState;
-import ma.org.comfybackend.security.Mappers.CustomerRegisterMapper;
-import ma.org.comfybackend.security.Mappers.ProductMapper;
+import ma.org.comfybackend.security.Mappers.*;
 import ma.org.comfybackend.security.Repositories.*;
 import org.apache.commons.lang3.RandomStringUtils;
 import ma.org.comfybackend.security.Entities.*;
-import ma.org.comfybackend.security.Mappers.CmmandMapper;
 import org.springframework.stereotype.Service;
 
 
@@ -34,6 +31,7 @@ public class CommandServiceImpl implements CommandService{
     CityRepository cityRepository;
     CustomerRepository customerRepository;
     EmailService emailService;
+    private ItemCommandMapper itemMapper;
     private CustomerRegisterMapper customerRegisterMapper;
 
     private final DeliveryAdressRepository deliveryAdressRepository;
@@ -65,6 +63,7 @@ public class CommandServiceImpl implements CommandService{
         this.productRepository = productRepository;
         this.productMapper = new ProductMapper();
         this.customerRegisterMapper = new CustomerRegisterMapper();
+        this.itemMapper = new ItemCommandMapper();
     }
 
     @Override
@@ -114,7 +113,7 @@ public class CommandServiceImpl implements CommandService{
             for(Item item:cardItems){
                 CommandItem commandItem = new CommandItem();
                 commandItem.setQuantity(item.getQuantity());
-                commandItem.setPrice(item.getProduct().getPrice());
+                commandItem.setPrice(item.getProduct().getPrice()-item.getProduct().getPromotion());
                 commandItem.setProduct(item.getProduct());
                 commandItem.setCommand(c);
                 this.commanditemRepository.save(commandItem);
@@ -505,6 +504,23 @@ public class CommandServiceImpl implements CommandService{
         command.setCommandState(CommandState.valueOf(stateValue));
         this.commandRepository.save(command);
         return 1;
+    }
+
+    @Override
+    public CommandShowDTO displayOnCommande(int id) {
+        Command c = this.commandRepository.findById(id).orElse(null);
+        CommandShowDTO commandShowDTO = this.commandMapper.fromCommand2(c);
+        List<CommandItem> items = (List<CommandItem>) c.getCommandItems();
+
+
+        List<ItemCommandDTO> collect = items.stream().map(i -> this.itemMapper.fromCommandItem(i)).collect(Collectors.toList());
+       for (int i=0;i<collect.size();i++){
+           collect.get(i).setProduct(this.productMapper.fromProduct(items.get(i).getProduct()));
+       }
+
+        commandShowDTO.setCommandItems(collect);
+
+        return commandShowDTO;
     }
 
 }

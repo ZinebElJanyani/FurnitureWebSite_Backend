@@ -21,6 +21,16 @@ public class ProductCDTO {
     private int categoryId;
     private String categorytitle;
 
+    private double stars;
+
+    public void setStars(double stars) {
+        this.stars = stars;
+    }
+
+    public double getStars() {
+        return stars;
+    }
+
     public void setCategorytitle(String categorytitle) {
         this.categorytitle = categorytitle;
     }
