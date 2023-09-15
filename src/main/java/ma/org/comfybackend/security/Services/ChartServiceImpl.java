@@ -98,7 +98,7 @@ public class ChartServiceImpl implements ChartService{
 
     @Override
     public Map<String, Long> getSalesPerCategory() {
-        System.out.println("koko");
+
         Map<String, Long> salesCat = new HashMap<>();
         List<Category> categories = this.categoryRepository.findAll();
         String categoryName;

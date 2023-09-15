@@ -2,10 +2,8 @@ package ma.org.comfybackend.security.Services;
 
 import ma.org.comfybackend.security.DTO.CaddyDTO;
 import ma.org.comfybackend.security.DTO.ItemDTO;
-import ma.org.comfybackend.security.Entities.Caddy;
-import ma.org.comfybackend.security.Entities.Customer;
-import ma.org.comfybackend.security.Entities.Item;
-import ma.org.comfybackend.security.Entities.Product;
+import ma.org.comfybackend.security.Entities.*;
+import ma.org.comfybackend.security.Mappers.CaddyMapper;
 import ma.org.comfybackend.security.Mappers.ItemMapper;
 import ma.org.comfybackend.security.Mappers.ProductMapper;
 import ma.org.comfybackend.security.Repositories.*;
@@ -23,12 +21,14 @@ public class CaddyServiceIMP implements CaddyService{
     CaddyRepository caddyRepository;
     CustomerRepository customerRepository;
     ProductRepository productRepository;
+    CaddyMapper caddyMapper;
+    CouponRepository couponRepository;
     private final CategoryRepository categoryRepository;
     private final ItemRepository itemRepository;
     ItemMapper itemMapper;
     private ProductMapper productMapper;
 
-    public CaddyServiceIMP(CaddyRepository caddyRepository,CustomerRepository customerRepository,
+    public CaddyServiceIMP(CouponRepository couponRepository,CaddyRepository caddyRepository,CustomerRepository customerRepository,
                            CategoryRepository categoryRepository,ProductRepository productRepository,
                            ItemRepository itemRepository) {
         this.caddyRepository = caddyRepository;
@@ -38,6 +38,8 @@ public class CaddyServiceIMP implements CaddyService{
         this.itemRepository = itemRepository;
         this.itemMapper = new ItemMapper();
         this.productMapper = new ProductMapper();
+        this.caddyMapper = new CaddyMapper();
+        this.couponRepository = couponRepository;
     }
 
     @Override
@@ -126,10 +128,11 @@ public class CaddyServiceIMP implements CaddyService{
     }
 
     @Override
-    public Caddy showCady(int customerId) {
+    public CaddyDTO showCady(int customerId) {
+        System.out.println("loloh");
         Customer customer = customerRepository.findById( customerId).orElse(null);
         Caddy caddy = caddyRepository.findByCustomer(customer);
-        return caddy;
+        return this.caddyMapper.fromCaddy(caddy);
     }
 
     @Override
@@ -150,6 +153,19 @@ public class CaddyServiceIMP implements CaddyService{
 
 
         return itemDTOS;
+    }
+
+    @Override
+    public float getCouponD(String code) {
+        Coupon c = this.couponRepository.findByCode(code);
+        float p;
+        if(c!=null){
+             p= c.getPrice();
+        }
+        else {
+            p= 0L;
+        }
+        return p;
     }
 
 }

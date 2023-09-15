@@ -12,6 +12,7 @@ import ma.org.comfybackend.security.Entities.*;
 import org.springframework.stereotype.Service;
 
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -73,7 +74,9 @@ public class CommandServiceImpl implements CommandService{
 
     @Override
     public List<City> listCities(int idR) {
+        System.out.println("lolo");
         Region r = regionRepository.findById(idR).orElse(null);
+        System.out.println(r.getNom());
         return cityRepository.findByRegion(r);
     }
 
@@ -137,14 +140,14 @@ public class CommandServiceImpl implements CommandService{
 
         this.emailService.sendMessage(customer.getEmail(), "Thank You for Your Order from Comfy!", message);*/
 
-      /*  String message = "Dear " + customer.getName() + ",\n\nThank you for choosing Comfy for your furniture needs. We appreciate your recent order and we are honored to have the opportunity to provide you with stylish and comfortable furniture for your home.\n\n" +
+       /*String message = "Dear " + customer.getName() + ",\n\nThank you for choosing Decor for your furniture needs. We appreciate your recent order and we are honored to have the opportunity to provide you with stylish and comfortable furniture for your home.\n\n" +
                 "We want you to know that your order has been received and is being prepared for shipment. Our team is dedicated to ensuring that your order is carefully packaged and delivered to you as quickly as possible. Your order is expected to be delivered to you by " + c.getDeliveryDate().toString() + ". We will also keep you informed about the status of your order and provide you with a tracking number so you can monitor its progress.\n\n" +
-                "If you have any questions or concerns about your order, please do not hesitate to contact our customer service team. We are always here to help and ensure that your experience with Comfy is nothing but positive.\n\n" +
-                "Thank you again for choosing Comfy.\n\n We appreciate your business and look forward to serving you in the future.\n\nBest regards,\nComfy";
+                "If you have any questions or concerns about your order, please do not hesitate to contact our customer service team. We are always here to help and ensure that your experience with Decor is nothing but positive.\n\n" +
+                "Thank you again for choosing Decor.\n\n We appreciate your business and look forward to serving you in the future.\n\nBest regards,\nDecor";
 
 
         try {
-            this.emailService.sendEmailWithAttachment(customer.getEmail(), "Thank You for Your Order from Comfy!", message,"C:\\Users\\HP\\homeDecor\\email\\logo.jpg");
+            this.emailService.sendEmailWithAttachment(customer.getEmail(), "Thank You for Your Order from Decor!", message,"C:\\Users\\HP\\homeDecor\\email\\logo.jpg");
         } catch (MessagingException e) {
             System.out.println(e);
             throw new RuntimeException(e);
@@ -281,7 +284,6 @@ public class CommandServiceImpl implements CommandService{
             document.add(table);
 
             document.add(Chunk.NEWLINE);
-            document.add(Chunk.NEWLINE); document.add(Chunk.NEWLINE);
             document.add(Chunk.NEWLINE);
 
             Paragraph paragraph = new Paragraph();
@@ -304,8 +306,6 @@ public class CommandServiceImpl implements CommandService{
                 header.setPhrase(new Phrase(headerTitle,headFont));
                 pdfPTable.addCell(header);
             });
-
-                document.add(Chunk.NEWLINE);
                 document.add(Chunk.NEWLINE);
                 PdfPCell titleCell = new PdfPCell(new Phrase("Name: "+command.getCustomer().getName()));
                 titleCell.setPaddingLeft(10);
@@ -314,7 +314,7 @@ public class CommandServiceImpl implements CommandService{
                 titleCell.setHorizontalAlignment(Element.ALIGN_LEFT);
                 pdfPTable.addCell(titleCell);
 
-                PdfPCell desCell = new PdfPCell(new Phrase("Company Name: Home Decor Co."));
+                PdfPCell desCell = new PdfPCell(new Phrase("Company Name: Decor Co."));
                 desCell.setPaddingLeft(10);
             desCell.setBorder(Rectangle.NO_BORDER);
 
@@ -381,7 +381,6 @@ public class CommandServiceImpl implements CommandService{
             document.add(pdfPTable);
 
             document.add(Chunk.NEWLINE);
-            document.add(Chunk.NEWLINE); document.add(Chunk.NEWLINE);
             document.add(Chunk.NEWLINE);
 
             PdfPTable pdfPTable2 = new PdfPTable(4);
@@ -433,13 +432,13 @@ public class CommandServiceImpl implements CommandService{
             Paragraph method = new Paragraph("Payment Method : "+command.getPaymentMethod().toString(),fontDetail);
             method.setAlignment(Element.ALIGN_RIGHT);
             document.add(method);
-            document.add(Chunk.NEWLINE);
+
 
             if(command.getCouponDiscount()!=0) {
                 Paragraph coupon = new Paragraph("Discount : " + command.getCouponDiscount(), fontDetail);
                 coupon.setAlignment(Element.ALIGN_RIGHT);
                 document.add(coupon);
-                document.add(Chunk.NEWLINE);
+
             }
 
             String dl = (command.getDeliveryPrice()==0)? "Free Delivery": ""+command.getDeliveryPrice();
@@ -447,13 +446,13 @@ public class CommandServiceImpl implements CommandService{
             Paragraph delevery = new Paragraph("Delivery : "+dl,fontDetail);
             delevery.setAlignment(Element.ALIGN_RIGHT);
             document.add(delevery);
-            document.add(Chunk.NEWLINE);
+
 
             if(command.getAssemblyPrice()!=0) {
                 Paragraph asseb = new Paragraph("Discount : " + command.getAssemblyPrice(), fontDetail);
                 asseb.setAlignment(Element.ALIGN_RIGHT);
                 document.add(asseb);
-                document.add(Chunk.NEWLINE);
+
             }
 
             document.add(Chunk.NEWLINE);
@@ -521,6 +520,14 @@ public class CommandServiceImpl implements CommandService{
         commandShowDTO.setCommandItems(collect);
 
         return commandShowDTO;
+    }
+
+    @Override
+    public List<DeliveryAdress> getSavedAdresses(int idCustomer) {
+        Customer customer = this.customerRepository.findById(idCustomer).orElse(null);
+        List<DeliveryAdress> deliveryAdresses = this.deliveryAdressRepository.findByIsSavedIsTrueAndCustomer(customer);
+
+        return deliveryAdresses;
     }
 
 }

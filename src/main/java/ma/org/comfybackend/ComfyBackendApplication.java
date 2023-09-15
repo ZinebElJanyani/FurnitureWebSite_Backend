@@ -24,10 +24,12 @@ import java.util.Date;
 @EnableGlobalMethodSecurity(prePostEnabled = true,securedEnabled = true)
 public class ComfyBackendApplication {
     private final ProductRepository productRepository;
+    private CouponRepository couponRepository;
     private final CustomerRegisterMapper userMaper;
-    public ComfyBackendApplication(ProductRepository productRepository) {
+    public ComfyBackendApplication(ProductRepository productRepository,CouponRepository couponRepository) {
         this.productRepository = productRepository;
         this.userMaper = new CustomerRegisterMapper();
+        this.couponRepository = couponRepository;
     }
 
     public static void main(String[] args) {
@@ -38,10 +40,21 @@ public class ComfyBackendApplication {
     PasswordEncoder passwordEncodor(){
         return new BCryptPasswordEncoder();
     }
-   /* @Bean
-     CommandLineRunner start(AccountService accountService) {
+
+     /*
+    @Bean
+     CommandLineRunner start() {
          return args -> {
-             AppUser u = new AppUser();
+             Coupon c = new Coupon();
+             c.setCode("124GN%SI&13DDF");
+             c.setPrice(200);
+             this.couponRepository.save(c);
+
+             Coupon d = new Coupon();
+             d.setCode("DFS35!/%dd&13&*DF");
+             d.setPrice(150);
+             this.couponRepository.save(d);
+            /* AppUser u = new AppUser();
              u.setName("zineb el janyani");
              u.setPassword("123");
              u.setRole("admin");
@@ -56,8 +69,8 @@ public class ComfyBackendApplication {
              c.setBirthday("23/5/2000");
              accountService.addNewCustomer(userMaper.fromCustomer_CDTO(c));
 
-         };
-     }*/
+         };*/
+     }
 
     /*@Bean
      CommandLineRunner start(AccountService accountService) {
@@ -385,5 +398,5 @@ public class ComfyBackendApplication {
         };
     }*/
 
-}
+
 

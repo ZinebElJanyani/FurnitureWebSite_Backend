@@ -36,7 +36,7 @@ public class CaddyController {
         return caddyService.showItems(customer_id);
     }
     @GetMapping(path = "/showCartInfo")
-    public Caddy showCart(@RequestParam("costomerId") int customer_id){
+    public CaddyDTO showCart(@RequestParam("costomerId") int customer_id){
         return caddyService.showCady(customer_id);
     }
     @DeleteMapping (path = "/deleteItem/{id}")
@@ -52,6 +52,13 @@ public class CaddyController {
     public List<ItemDTO> getItems(@RequestParam("costomerId") int customer_id){
         return caddyService.displayItems(customer_id);
     }
+
+    @GetMapping(path = "/verifyCoupon")
+    public float deleteItem(@RequestParam("code") String code){
+        return caddyService.getCouponD(code);
+    }
+
+
 
 
 }

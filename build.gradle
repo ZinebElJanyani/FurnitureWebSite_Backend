@@ -35,6 +35,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.apache.tika:tika-core:1.27'
     implementation 'com.itextpdf:itextpdf:5.5.13.2'
+    implementation 'commons-codec:commons-codec:1.15'
 }
 
 tasks.named('test') {

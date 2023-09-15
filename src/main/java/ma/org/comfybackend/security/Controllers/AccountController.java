@@ -31,7 +31,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-//http://localhost:8084/api/UserAccount/customers
 @RestController
 @RequestMapping("api/UserAccount")
 public class AccountController {

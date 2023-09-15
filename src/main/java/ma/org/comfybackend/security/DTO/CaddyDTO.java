@@ -11,6 +11,7 @@ public class CaddyDTO {
     private float deliveryPrice;
     private float coupon;
 
+    public CaddyDTO(){}
     public CaddyDTO( float totalPrice, float deliveryPrice, float coupon) {
 
         this.totalPrice = totalPrice;

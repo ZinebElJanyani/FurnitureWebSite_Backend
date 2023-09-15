@@ -3,6 +3,7 @@ package ma.org.comfybackend.security.Controllers;
 import ma.org.comfybackend.security.DTO.*;
 import ma.org.comfybackend.security.Entities.City;
 import ma.org.comfybackend.security.Entities.Command;
+import ma.org.comfybackend.security.Entities.DeliveryAdress;
 import ma.org.comfybackend.security.Entities.Region;
 import ma.org.comfybackend.security.Services.CommandService;
 import ma.org.comfybackend.security.Services.EmailService;
@@ -32,7 +33,7 @@ public class CommandController {
         return commandService.listRegions();
     }
 
-    @GetMapping(path = "/showCity")
+    @GetMapping(path = "/showCity/{idR}")
     public List<City> showCities(@PathVariable int idR){
         return commandService.listCities(idR);
     }
@@ -97,5 +98,11 @@ public class CommandController {
     @GetMapping(path = "/showCommand/{id}")
     public CommandShowDTO getOneCommand(@PathVariable int id) {
         return commandService.displayOnCommande(id);
+    }
+
+
+    @GetMapping(path = "/getAdresses/{idCustomer}")
+    public List<DeliveryAdress> savedAdresses(@PathVariable int idCustomer){
+        return commandService.getSavedAdresses(idCustomer);
     }
 }

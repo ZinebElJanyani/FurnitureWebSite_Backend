@@ -3,7 +3,6 @@ package ma.org.comfybackend.security.Services;
 import ma.org.comfybackend.security.DTO.CaddyDTO;
 import ma.org.comfybackend.security.DTO.ItemDTO;
 import ma.org.comfybackend.security.Entities.Caddy;
-import ma.org.comfybackend.security.Entities.Command;
 
 import java.util.List;
 
@@ -18,9 +17,10 @@ public interface CaddyService {
 
     int updateCaddy(CaddyDTO caddyDTO, int idCustomer);
 
-    Caddy showCady(int customerId);
+    CaddyDTO showCady(int customerId);
 
     List<ItemDTO> displayItems(int cid);
 
 
+    float getCouponD(String code);
 }

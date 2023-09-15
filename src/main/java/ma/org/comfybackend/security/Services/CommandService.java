@@ -2,6 +2,7 @@ package ma.org.comfybackend.security.Services;
 
 import ma.org.comfybackend.security.DTO.*;
 import ma.org.comfybackend.security.Entities.City;
+import ma.org.comfybackend.security.Entities.DeliveryAdress;
 import ma.org.comfybackend.security.Entities.Region;
 
 import java.io.ByteArrayInputStream;
@@ -30,4 +31,6 @@ public interface CommandService {
     int changeState(int idCommand, String stateValue);
 
     CommandShowDTO displayOnCommande(int id);
+
+    List<DeliveryAdress> getSavedAdresses(int idCustomer);
 }
